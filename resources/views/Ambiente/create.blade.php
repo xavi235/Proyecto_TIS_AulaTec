@@ -13,7 +13,7 @@
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="departamento" class="form-label">Departamento</label>
-                    <input id="departamento" name="departamento" type="text" class="form-control" tabindex="1" maxlength="20">
+                    <input id="departamento" name="departamento" type="text" class="form-control" tabindex="1" maxlength="30">
                     <div id="departamentoError" class="text-danger"></div>
                 </div>
 
@@ -27,7 +27,7 @@
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="tipo" class="form-label">Tipo de ambiente</label>
-                    <input id="tipo" name="tipo" type="text" class="form-control" tabindex="3" maxlength="20">
+                    <input id="tipo" name="tipo" type="text" class="form-control" tabindex="3" maxlength="30">
                     <div id="tipoError" class="text-danger"></div>
                 </div>
             </div>
@@ -69,7 +69,7 @@
 
                 // Verificar si la capacidad es un número
                 if (!$.isNumeric(capacidad.trim()) && capacidad.trim() !== '') {
-                    $('#capacidadError').text('El valor ingresado debe ser un número.');
+                    $('#capacidadError').text('Solo se permiten caracteres numéricos.');
                     $('#guardarBtn').prop('disabled', true);
                 } else {
                     $('#capacidadError').text('');
@@ -82,7 +82,7 @@
                     $('#guardarBtn').prop('disabled', true);
                 } else {
                     $('#departamentoError').text('');
-                    if (departamento.trim().length < 4 || departamento.trim().length > 20) {
+                    if (departamento.trim().length < 4 || departamento.trim().length > 30) {
                         $('#guardarBtn').prop('disabled', true);
                     }
                 }
@@ -92,7 +92,7 @@
                     $('#guardarBtn').prop('disabled', true);
                 } else {
                     $('#tipoError').text('');
-                    if (tipo.trim().length < 4 || tipo.trim().length > 20) {
+                    if (tipo.trim().length < 4 || tipo.trim().length > 30) {
                         $('#guardarBtn').prop('disabled', true);
                     }
                 }
@@ -110,7 +110,7 @@
                     return false;
                 }
                 
-                // Aquí puedes agregar la lógica para mostrar el mensaje de éxito
+                
                 Swal.fire(
                     'Registro exitoso!',
                     'El ambiente ha sido registrado correctamente.',
