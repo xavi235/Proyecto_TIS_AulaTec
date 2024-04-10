@@ -13,19 +13,22 @@
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="departamento" class="form-label">Departamento</label>
-                    <input id="departamento" name="departamento" type="text" class="form-control" tabindex="1">
+                    <input id="departamento" name="departamento" type="text" class="form-control" tabindex="1" maxlength="20">
+                    <div id="departamentoError" class="text-danger"></div>
                 </div>
 
                 <div class="mb-3">
                     <label for="capacidad" class="form-label">Capacidad</label>
                     <input id="capacidad" name="capacidad" type="text" class="form-control" tabindex="2">
+                    <div id="capacidadError" class="text-danger"></div>
                 </div>
             </div>
 
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="tipo" class="form-label">Tipo de ambiente</label>
-                    <input id="tipo" name="tipo" type="text" class="form-control" tabindex="3">
+                    <input id="tipo" name="tipo" type="text" class="form-control" tabindex="3" maxlength="20">
+                    <div id="tipoError" class="text-danger"></div>
                 </div>
             </div>
         </div>
@@ -43,32 +46,76 @@
 @stop
 
 @section('js')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
         $(document).ready(function() {
-            // Verificar validez del formulario al cargar la página
+            
             checkFormValidity();
 
-            // Función para verificar validez del formulario
+            
             function checkFormValidity() {
                 var departamento = $('#departamento').val();
                 var capacidad = $('#capacidad').val();
                 var tipo = $('#tipo').val();
 
-                if (departamento && capacidad && tipo) {
-                    $('#guardarBtn').prop('disabled', false);
-                } else {
+                
+                if (isNaN(capacidad.trim()) || capacidad.trim() < 25 || capacidad.trim() > 120) {
+                    $('#capacidadError').text('La capacidad debe estar entre 25 y 120.');
                     $('#guardarBtn').prop('disabled', true);
+                } else {
+                    $('#capacidadError').text('');
+                    $('#guardarBtn').prop('disabled', false);
+                }
+
+                // Verificar si la capacidad es un número
+                if (!$.isNumeric(capacidad.trim()) && capacidad.trim() !== '') {
+                    $('#capacidadError').text('El valor ingresado debe ser un número.');
+                    $('#guardarBtn').prop('disabled', true);
+                } else {
+                    $('#capacidadError').text('');
+                }
+                
+                var regex = /^[a-zA-Z0-9\s]*$/u; // Expresión regular para letras, números y espacios
+
+                if (!regex.test(departamento.trim()) && departamento.trim() !== '') {
+                    $('#departamentoError').text('El campo departamento solo debe contener letras, números y espacios.');
+                    $('#guardarBtn').prop('disabled', true);
+                } else {
+                    $('#departamentoError').text('');
+                    if (departamento.trim().length < 4 || departamento.trim().length > 20) {
+                        $('#guardarBtn').prop('disabled', true);
+                    }
+                }
+
+                if (!regex.test(tipo.trim()) && tipo.trim() !== '') {
+                    $('#tipoError').text('El campo tipo solo debe contener letras, números y espacios.');
+                    $('#guardarBtn').prop('disabled', true);
+                } else {
+                    $('#tipoError').text('');
+                    if (tipo.trim().length < 4 || tipo.trim().length > 20) {
+                        $('#guardarBtn').prop('disabled', true);
+                    }
                 }
             }
 
-            // Verificar validez del formulario al cambiar los valores de los campos
+           
             $('#departamento, #capacidad, #tipo').change(function() {
                 checkFormValidity();
             });
 
-            // Verificar validez del formulario al enviar el formulario
+            
             $('#ambienteForm').submit(function() {
                 checkFormValidity();
+                if ($('#guardarBtn').prop('disabled')) {
+                    return false;
+                }
+                
+                // Aquí puedes agregar la lógica para mostrar el mensaje de éxito
+                Swal.fire(
+                    'Registro exitoso!',
+                    'El ambiente ha sido registrado correctamente.',
+                    'success'
+                );
             });
         });
     </script>

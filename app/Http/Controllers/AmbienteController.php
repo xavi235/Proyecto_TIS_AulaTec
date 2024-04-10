@@ -36,10 +36,20 @@ class AmbienteController extends Controller
      */
     public function store(Request $request)
     {
+        $validatedData = $request->validate([
+            'departamento' => 'required|string|regex:/^[a-zA-Z0-9\s]+$/u',
+            'capacidad' => 'required|integer',
+            'tipo' => 'required|string|regex:/^[a-zA-Z0-9\s]+$/u',
+        ], [
+            'departamento.regex' => 'Solo se permiten caracteres alfanuméricos.',
+            'tipo.regex' => 'Solo se permiten caracteres alfanuméricos.',
+            'capacidad.numeric_only' => 'El campo capacidad solo acepta valores numéricos.',
+        ]);
+
         $ambiente = new Ambiente();
-        $ambiente->departamento = $request->get('departamento');
-        $ambiente->capacidad = $request->get('capacidad');
-        $ambiente->TipoDeAmbiente = $request->get('tipo');
+        $ambiente->departamento = $validatedData['departamento'];
+        $ambiente->capacidad = $validatedData['capacidad'];
+        $ambiente->TipoDeAmbiente = $validatedData['tipo'];
 
         $ambiente->save();
 

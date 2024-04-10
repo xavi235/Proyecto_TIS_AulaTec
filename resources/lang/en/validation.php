@@ -142,10 +142,12 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'attributes' => [
+            'capacidad' => 'capacidad',
         ],
+        'numeric_only' => 'El campo :attribute solo acepta valores numéricos.',
     ],
+    
 
     /*
     |--------------------------------------------------------------------------

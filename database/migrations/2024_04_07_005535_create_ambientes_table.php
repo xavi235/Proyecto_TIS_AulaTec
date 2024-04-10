@@ -15,9 +15,9 @@ class CreateAmbientesTable extends Migration
 
        Schema::create('ambientes',function (Blueprint $table) {
         $table->id();
-        $table->string('departamento', 50);
-        $table->integer('capacidad')->default(0);
-        $table->string('tipoDeAmbiente', 255);
+        $table->string('departamento', 20);
+        $table->integer('capacidad');
+        $table->string('tipoDeAmbiente', 20);
         $table->timestamps();
     });
     
