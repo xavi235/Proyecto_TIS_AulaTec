@@ -14,7 +14,7 @@ return [
     */
 
     'failed' => 'Estas credenciales no coinciden con nuestros registros.',
-    'password' => 'La contraseÒa proporcionada es incorrecta.',
-    'throttle' => 'Demasiados intentos de inicio de sesiÛn. IntÈntelo de nuevo en :segundos segundos.',
+    'password' => 'La contrase√±a proporcionada es incorrecta.',
+    'throttle' => 'Demasiados intentos de inicio de sesi√≥n. Int√©ntelo de nuevo en :segundos segundos.',
 
 ];

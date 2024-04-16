@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Ambiente;
+use App\Models\Ubicacion;
 use Illuminate\Http\Request;
-use App\Models\Horario;
 
-class HorarioController extends Controller
+class UbicacionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,12 +13,9 @@ class HorarioController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {}
-        /**$horarios = Horario::all();
-        $horarios = Horario::with('ambiente')->get();
-        return view('Horario.index')->with('horarios',$horarios);
-        /*
-    
+    {
+        //
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -28,9 +24,7 @@ class HorarioController extends Controller
      */
     public function create()
     {
-        $ambientes = Ambiente::all();
-        $horarios = Horario::all();
-        return view('Horario.create', compact('ambientes', 'horarios'));
+        
     }
 
     /**
@@ -41,24 +35,16 @@ class HorarioController extends Controller
      */
     public function store(Request $request)
     {
-        $horario = new Horario();
-        $horario->horaini = $request->get('horaini');
-        $horario->horafin = $request->get('horafin');
-        $horario->id_ambiente = $request->get('ambiente');
-        $horario->estado = $request->estado;
-
-        $horario->save();
-
-        return redirect('/Horario');
+        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Ubicacion  $ubicacion
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Ubicacion $ubicacion)
     {
         //
     }
@@ -66,10 +52,10 @@ class HorarioController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Ubicacion  $ubicacion
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Ubicacion $ubicacion)
     {
         //
     }
@@ -78,10 +64,10 @@ class HorarioController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Models\Ubicacion  $ubicacion
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Ubicacion $ubicacion)
     {
         //
     }
@@ -89,10 +75,10 @@ class HorarioController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Models\Ubicacion  $ubicacion
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Ubicacion $ubicacion)
     {
         //
     }

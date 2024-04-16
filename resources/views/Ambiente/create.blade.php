@@ -30,12 +30,23 @@
                     <input id="tipo" name="tipo" type="text" class="form-control" tabindex="3" maxlength="30">
                     <div id="tipoError" class="text-danger"></div>
                 </div>
+
+                <div class="mb-3">
+                    <label for="ubicacion" class="form-label">Ubicación</label>
+                    <select id="ubicacion" name="ubicacion" class="form-control" tabindex="4">
+                        <option value="">Seleccione una ubicación</option>
+                        @foreach($ubicaciones as $ubicacion)
+                            <option value="{{ $ubicacion->id }}">{{ $ubicacion->nombre }}</option>
+                        @endforeach
+                    </select>
+                    <div id="ubicacionError" class="text-danger"></div>
+                </div>
             </div>
         </div>
         
         <div class="mb-3">
-            <a href="/Ambiente" class="btn btn-secondary" tabindex="4">Cancelar</a>
-            <button type="submit" class="btn btn-primary" id="guardarBtn" tabindex="5" disabled>Guardar</button>
+            <a href="/Ambiente" class="btn btn-secondary" tabindex="5">Cancelar</a>
+            <button type="submit" class="btn btn-primary" id="guardarBtn" tabindex="6" disabled>Registrar</button>
         </div>
     </form>
 @stop
@@ -57,8 +68,27 @@
                 var departamento = $('#departamento').val();
                 var capacidad = $('#capacidad').val();
                 var tipo = $('#tipo').val();
+                var ubicacion = $('#ubicacion').val();
 
-                
+                // Validar que los campos no estén vacíos
+                if (!departamento || !capacidad || !tipo || !ubicacion) {
+                    $('#guardarBtn').prop('disabled', true);
+                    return;
+                }
+
+                // Validar campo Departamento
+                var departamentoRegex = /^[a-zA-Z0-9\s]*$/u;
+                if (!departamentoRegex.test(departamento.trim()) && departamento.trim() !== '') {
+                    $('#departamentoError').text('El campo departamento solo debe contener letras, números y espacios.');
+                    $('#guardarBtn').prop('disabled', true);
+                } else {
+                    $('#departamentoError').text('');
+                    if (departamento.trim().length < 4 || departamento.trim().length > 30) {
+                        $('#guardarBtn').prop('disabled', true);
+                    }
+                }
+
+                // Validar campo Capacidad
                 if (isNaN(capacidad.trim()) || capacidad.trim() < 25 || capacidad.trim() > 120) {
                     $('#capacidadError').text('La capacidad debe estar entre 25 y 120.');
                     $('#guardarBtn').prop('disabled', true);
@@ -74,20 +104,10 @@
                 } else {
                     $('#capacidadError').text('');
                 }
-                
-                var regex = /^[a-zA-Z0-9\s]*$/u; // Expresión regular para letras, números y espacios
 
-                if (!regex.test(departamento.trim()) && departamento.trim() !== '') {
-                    $('#departamentoError').text('El campo departamento solo debe contener letras, números y espacios.');
-                    $('#guardarBtn').prop('disabled', true);
-                } else {
-                    $('#departamentoError').text('');
-                    if (departamento.trim().length < 4 || departamento.trim().length > 30) {
-                        $('#guardarBtn').prop('disabled', true);
-                    }
-                }
-
-                if (!regex.test(tipo.trim()) && tipo.trim() !== '') {
+                // Validar campo Tipo de Ambiente
+                var tipoRegex = /^[a-zA-Z0-9\s]*$/u;
+                if (!tipoRegex.test(tipo.trim()) && tipo.trim() !== '') {
                     $('#tipoError').text('El campo tipo solo debe contener letras, números y espacios.');
                     $('#guardarBtn').prop('disabled', true);
                 } else {
@@ -99,7 +119,7 @@
             }
 
            
-            $('#departamento, #capacidad, #tipo').change(function() {
+            $('#departamento, #capacidad, #tipo, #ubicacion').change(function() {
                 checkFormValidity();
             });
 
@@ -111,11 +131,17 @@
                 }
                 
                 
-                Swal.fire(
-                    'Registro exitoso!',
-                    'El ambiente ha sido registrado correctamente.',
-                    'success'
-                );
+                Swal.fire({
+                    title: 'Registro exitoso!',
+                    text: 'El ambiente ha sido registrado correctamente.',
+                    icon: 'success',
+                    timer: 3000, // Duración en milisegundos (3 segundos)
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                }).then((result) => {
+                    // Redirigir al index de ambientes al cerrar la alerta
+                    window.location.href = "/Ambiente";
+                });
             });
         });
     </script>

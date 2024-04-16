@@ -3,71 +3,43 @@
 @section('title', 'CRUD HORARIOS')
 
 @section('content_header')
-    <h1>Registro de horarios</h1>
+    <h1>Registro de Horas y Ambientes</h1>
 @stop
 
 @section('content')
-    <form action="/Horario" method="POST" id="horarioForm">
+    <form action="{{ route('Horario.store') }}" method="POST" id="horarioForm">
         @csrf
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-3">
-                    <label for="horaini" class="form-label">Hora inicio</label>
-                    <select id="horaini" name="horaini" class="form-select form-control" tabindex="1">
-                        @for ($hour = 6; $hour <= 8; $hour++)
-                            @php
-                                $selected = ($hour == 6) ? 'selected' : '';
-                            @endphp
-                            <option value="{{ str_pad($hour, 2, "0", STR_PAD_LEFT) }}:45" {{ $selected }}>
-                                {{ str_pad($hour, 2, "0", STR_PAD_LEFT) }}:45
-                            </option>
-                            <option value="{{ str_pad($hour, 2, "0", STR_PAD_LEFT) }}:15">
-                                {{ str_pad($hour, 2, "0", STR_PAD_LEFT) }}:15
-                            </option>
-                        @endfor
+                    <label for="estado" class="form-label">Estado</label>
+                    <select id="estado" name="estado" class="form-control" tabindex="1">
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
                     </select>
                 </div>
-
                 <div class="mb-3">
-                    <label for="horafin" class="form-label">Hora fin</label>
-                    <select id="horafin" name="horafin" class="form-select form-control" tabindex="2">
-                        @for ($hour = 6; $hour <= 8; $hour++)
-                            @php
-                                $selected = ($hour == 8) ? 'selected' : '';
-                            @endphp
-                            <option value="{{ str_pad($hour, 2, "0", STR_PAD_LEFT) }}:45" {{ $selected }}>
-                                {{ str_pad($hour, 2, "0", STR_PAD_LEFT) }}:45
-                            </option>
-                            <option value="{{ str_pad($hour, 2, "0", STR_PAD_LEFT) }}:15">
-                                {{ str_pad($hour, 2, "0", STR_PAD_LEFT) }}:15
-                            </option>
-                        @endfor
+                    <label for="horario" class="form-label">Horario</label>
+                    <select id="horario" name="horario" class="form-control" tabindex="2">
+                        @foreach($horarios as $horario)
+                            <option value="{{ $horario->id }}">{{ $horario->horaini }}</option>
+                        @endforeach
                     </select>
                 </div>
-            </div>
-
-            <div class="col-md-6">
                 <div class="mb-3">
                     <label for="ambiente" class="form-label">Ambiente</label>
                     <select id="ambiente" name="ambiente" class="form-control" tabindex="3">
-                        <option value="">Selecciona un ambiente</option>
+                        @foreach($ambientes as $ambiente)
+                            <option value="{{ $ambiente->id }}">{{ $ambiente->tipoDeAmbiente }}</option>
+                        @endforeach
                     </select>
                 </div>
-                <div class="mb-3">
-                    <label for="estado" class="form-label">Estado</label>
-                    <select id="estado" name="estado" class="form-control" tabindex="4">
-                        <option value="" selected disabled>Selecciona un estado</option>
-                        <option value="Disponible">Disponible</option>
-                        <option value="No Disponible">No Disponible</option>
-                    </select>
-                </div>
-                <!-- Campo oculto para almacenar el valor del estado seleccionado -->
-                <input type="hidden" id="estado_hidden" name="estado_hidden">
             </div>
         </div>
+        
         <div class="mb-3">
-            <a href="/Ambiente" class="btn btn-secondary" tabindex="5">Cancelar</a>
-            <button type="submit" class="btn btn-primary" id="guardarBtn" tabindex="6" disabled>Guardar</button>
+            <a href="{{ route('Ambiente.index') }}" class="btn btn-secondary" tabindex="4">Cancelar</a>
+            <button type="submit" class="btn btn-primary" tabindex="5" id="guardarBtn" disabled>Registrar</button>
         </div>
     </form>
 @stop
@@ -78,42 +50,58 @@
 @stop
 
 @section('js')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
         $(document).ready(function() {
-            $.ajax({
-                url: "{{ route('get.ambientes') }}",
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    var options = '<option value="">Selecciona un ambiente</option>';
-                    $.each(data, function(key, ambiente) {
-                        options += '<option value="' + ambiente.id + '">' + ambiente.departamento + '</option>';
-                    });
-                    $('#ambiente').html(options);
-                }
-            });
 
-            // Capturar el cambio en el campo de estado y asignarlo al campo oculto
-            $('#estado').change(function() {
-                $('#estado_hidden').val($(this).val());
-                checkFormValidity(); // Verificar validez del formulario al cambiar el estado
-            });
-
-            // Verificar validez del formulario al cargar la página
             checkFormValidity();
 
             function checkFormValidity() {
-                var horaini = $('#horaini').val();
-                var horafin = $('#horafin').val();
-                var ambiente = $('#ambiente').val();
                 var estado = $('#estado').val();
+                var horario = $('#horario').val();
+                var ambiente = $('#ambiente').val();
 
-                if (horaini && horafin && ambiente && estado) {
+                if (estado && horario && ambiente) {
                     $('#guardarBtn').prop('disabled', false);
                 } else {
                     $('#guardarBtn').prop('disabled', true);
                 }
             }
+
+            $('#estado, #horario, #ambiente').change(function() {
+                checkFormValidity();
+            });
+
+            $('#horarioForm').submit(function(e) {
+                e.preventDefault(); // Evitar envío normal del formulario
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: $(this).attr('method'),
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        // Aquí puedes agregar la lógica para mostrar el mensaje de éxito
+                        Swal.fire({
+                            title: 'Registro exitoso!',
+                            text: 'El horario ha sido registrado correctamente.',
+                            icon: 'success',
+                            timer: 2000, // Duración en milisegundos (3 segundos)
+                            timerProgressBar: true,
+                            showConfirmButton: false
+                        }).then((result) => {
+                            // Redirigir al index de horarios al cerrar la alerta
+                            window.location.href = "{{ route('Horario.index') }}";
+                        });
+                        // Limpiar el formulario después del registro exitoso
+                        $('#horarioForm')[0].reset();
+                        $('#guardarBtn').prop('disabled', true);
+                    },
+                    error: function(xhr, status, error) {
+                        // Aquí puedes manejar errores si el registro falla
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
         });
     </script>
 @stop

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Ambiente;
+use App\Models\Ubicacion;
 
 class AmbienteController extends Controller
 {
@@ -25,7 +26,8 @@ class AmbienteController extends Controller
      */
     public function create()
     {
-        return view('Ambiente.create');
+        $ubicaciones = Ubicacion::all();
+        return view('Ambiente.create', compact('ubicaciones'));
     }
 
     /**
@@ -35,26 +37,25 @@ class AmbienteController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'departamento' => 'required|string|regex:/^[a-zA-Z0-9\s]+$/u',
-            'capacidad' => 'required|integer',
-            'tipo' => 'required|string|regex:/^[a-zA-Z0-9\s]+$/u',
-        ], [
-            'departamento.regex' => 'Solo se permiten caracteres alfanuméricos.',
-            'tipo.regex' => 'Solo se permiten caracteres alfanuméricos.',
-            'capacidad.numeric_only' => 'El campo capacidad solo acepta valores numéricos.',
-        ]);
+{
+    $request->validate([
+        'departamento' => 'required',
+        'capacidad' => 'required|numeric',
+        'tipo' => 'required',
+        'ubicacion' => 'required',
+    ]);
 
-        $ambiente = new Ambiente();
-        $ambiente->departamento = $validatedData['departamento'];
-        $ambiente->capacidad = $validatedData['capacidad'];
-        $ambiente->TipoDeAmbiente = $validatedData['tipo'];
+    $ambiente = new Ambiente();
+    $ambiente->departamento = $request->input('departamento');
+    $ambiente->capacidad = $request->input('capacidad');
+    $ambiente->TipoDeAmbiente = $request->input('tipo');
+    $ambiente->id_ubicacion = $request->input('ubicacion');
 
-        $ambiente->save();
+    $ambiente->save();
 
-        return redirect('/Ambiente');
-    }
+    return redirect('/Ambiente')->with('success', 'Ambiente creado exitosamente');
+}
+
 
     /**
      * Display the specified resource.

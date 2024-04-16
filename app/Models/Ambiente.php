@@ -9,4 +9,8 @@ class Ambiente extends Model
 {
     use HasFactory;
      protected $fillable = ['departamento', 'capacidad', 'tipoDeAmbiente'];
+
+    public function ubicacion(){
+        return $this->belongsTo(Ubicacion::class , 'id_ubicacion');
+    }
 }

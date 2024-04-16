@@ -11,13 +11,18 @@ class horario extends Model
     protected $fillable = [
         'horaini',
         'horafin',
-        'estado',
-        'id_amhbiente',
     ];
+    public function ambiente_horario(){
+        return $this->hasMany(AmbienteHorario::class, 'id_horario');
+    }
     public function ambiente()
     {
         return $this->belongsTo(Ambiente::class, 'id_ambiente');
     }
+    /**public function ambiente()
+    {
+        return $this->belongsTo(Ambiente::class, 'id_ambiente');
+    }_*/
 }
 
 

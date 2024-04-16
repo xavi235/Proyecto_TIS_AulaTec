@@ -145,7 +145,7 @@ return [
         'attributes' => [
             'capacidad' => 'capacidad',
         ],
-        'numeric_only' => 'El campo :attribute solo acepta valores numÈricos.',
+        'numeric_only' => 'El campo :attribute solo acepta valores num√©ricos.',
     ],
     
 
