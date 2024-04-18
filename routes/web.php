@@ -21,22 +21,24 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::resource('Ambiente','App\Http\Controllers\AmbienteController');
+Route::get('/home', [AmbienteController::class, 'index'])->name('home')->middleware('auth');
 
-Route::resource('Horario','App\Http\Controllers\AmbienteHorarioController');
+Route::resource('Ambiente', AmbienteController::class)->middleware('auth');
 
-Route::get('/get-ambientes', [AmbienteController::class, 'getAmbientes'])->name('get.ambientes');
+Route::resource('Horario', AmbienteHorarioController::class)->middleware('auth');
 
-Route::get('/ambiente_horarios', [AmbienteHorarioController::class, 'index'])->name('ambiente_horarios.index');
+Route::get('/get-ambientes', [AmbienteController::class, 'getAmbientes'])->name('get.ambientes')->middleware('auth');
 
-Route::get('/Horario/create', [HorarioController::class, 'create'])->name('Horario.create');
+Route::get('/ambiente_horarios', [AmbienteHorarioController::class, 'index'])->name('ambiente_horarios.index')->middleware('auth');
 
-Route::post('/ambiente_horarios', [AmbienteHorarioController::class, 'store'])->name('ambiente_horarios.store');
+Route::get('/Horario/create', [HorarioController::class, 'create'])->name('Horario.create')->middleware('auth');
 
-Route::get('/horario/create', [HorarioController::class, 'create'])->name('Horario.create');
+Route::post('/ambiente_horarios', [AmbienteHorarioController::class, 'store'])->name('ambiente_horarios.store')->middleware('auth');
 
+Route::get('/horario/create', [HorarioController::class, 'create'])->name('Horario.create')->middleware('auth');
+
+//redireccion ala pagina de docente
+Route::view('/docente', 'docente')->name('docente');

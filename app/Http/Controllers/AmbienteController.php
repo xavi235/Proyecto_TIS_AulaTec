@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Ambiente;
 use App\Models\Ubicacion;
+use Illuminate\Support\Facades\Auth;
 
 class AmbienteController extends Controller
 {
@@ -15,8 +16,11 @@ class AmbienteController extends Controller
      */
     public function index()
     {
-        $ambientes = Ambiente::all();
-        return view('Ambiente.index')->with('ambientes',$ambientes);
+        if (Auth::user()->id_rol !== 1) {
+            return redirect()->route('home');
+        }
+          $ambientes = Ambiente::all();
+          return view('Ambiente.index')->with('ambientes', $ambientes);
     }
 
     /**
@@ -106,4 +110,5 @@ class AmbienteController extends Controller
     $ambientes = Ambiente::all();
     return response()->json($ambientes);
     }
+    
 }

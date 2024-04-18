@@ -23,6 +23,14 @@ class User extends Authenticatable
         'password',
     ];
 
+    public function usuario_materia(){
+        return $this->belongsTo(Usuario_Materia::class, 'id_usuario_materia');
+    }
+
+    public function rol(){
+        return $this->hasOne(Rol::class, 'id_rol');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
