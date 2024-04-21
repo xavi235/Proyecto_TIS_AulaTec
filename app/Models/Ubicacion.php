@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Ubicacion extends Model
 {
     use HasFactory;
-    protected $fillable = ['nombre',];
+    protected $fillable = ['nombre'];
 
     public function ambiente(){
         return $this->hasMany(Ambiente::class);

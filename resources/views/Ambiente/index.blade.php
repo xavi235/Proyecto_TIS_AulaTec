@@ -17,7 +17,8 @@
                     <th scope="col">Capacidad</th>
                     <th scope="col">Tipo de ambiente</th>
                     <!-- <th scope="col">Estado</th> -->
-                    <!-- <th scope="col">Acciones</th> -->
+                    <th scope="col">Ubicacion</th>
+                    <th scope="col">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,11 +28,18 @@
                         <td>{{$ambiente->departamento}}</td>
                         <td>{{$ambiente->capacidad}}</td>
                         <td>{{$ambiente->tipoDeAmbiente}}</td>
+                        <td>{{ $ambiente->ubicacion->nombre }}</td>
                         <!-- <td>{{$ambiente->estado}}</td> -->
-                        <!-- <td>
-                            <a class = "btn btn-info">Editar</a>
-                            <button class = "btn btn-danger">Borrar</button>
-                        </td> -->
+                        <td>
+                            <form action="{{ route ('Ambiente.destroy', $ambiente->id)}}" method="POST">
+                            <a href="/Ambiente/{{ $ambiente->id}}/edit" class = "btn btn-info">Editar</a>
+                            <!-- <a href="{{ route('Ambiente.edit', $ambiente->id) }}" class="btn btn-info">Editar</a> -->
+
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class = "btn btn-danger">Borrar</button>
+                            </form>
+                        </td> 
                     </tr>
                 @endforeach
             </tbody>
@@ -40,23 +48,30 @@
 @stop
 
 @section('css')
-    <link href= "https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 @stop
 
 @section('js')
-    <script src ="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src ="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src ="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
-    <script src ="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
 
-    <script>    
+    <script>
         $(document).ready(function() {
             $('#ambiente').DataTable({
                 "language": {
-                    "search": "Buscador",
+                    "search": '<span class="fa fa-search"></span>', // Cambiar el texto por un icono
                     "lengthMenu": "",
-                    "info" : ""
-                }
+                    "zeroRecords": "No se encontraron resultados",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "No hay registros disponibles",
+                    "infoFiltered": "(filtrando de un total de _MAX_ registros)",
+                    "paginate": {
+                        "previous": "Anterior",
+                        "next": "Siguiente"
+                    }
+                },
+                "dom": '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>><"row"<"col-sm-12"tr>><"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>', // Cambiar el diseño del DOM
             });
         });
     </script>

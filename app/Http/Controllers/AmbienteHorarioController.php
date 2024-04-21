@@ -40,24 +40,46 @@ class AmbienteHorarioController extends Controller
     // Validar los datos del formulario
     $request->validate([
         'estado' => 'required',
-        'horario' => 'required', // Cambiado a 'horario' en lugar de 'horario_id'
-        'ambiente' => 'required', // Cambiado a 'ambiente' en lugar de 'ambiente_id'
+        'horario' => 'required|array', // Cambiado a 'array'
+        'ambiente' => 'required',
+        'dia' => 'required',
     ]);
 
-    // Crear una nueva instancia del modelo Ambiente_horario
-    $ambienteHorario = new AmbienteHorario();
+    // Obtener los horarios seleccionados
+    $horariosSeleccionados = $request->input('horario');
 
-    // Asignar los valores del formulario a los campos del modelo
-    $ambienteHorario->estado = $request->estado;
-    $ambienteHorario->id_horario = $request->horario; // Cambiado a 'id_horario'
-    $ambienteHorario->id_ambiente = $request->ambiente; // Cambiado a 'id_ambiente'
+    // Verificar si ya existe una entrada para los mismos horarios seleccionados
+    $existe = AmbienteHorario::whereIn('id_horario', $horariosSeleccionados)
+        ->where('id_ambiente', $request->ambiente)
+        ->where('estado', 'Ocupado')
+        ->where('dia', $request->dia)
+        ->exists();
 
-    // Guardar el nuevo ambiente horario en la base de datos
-    $ambienteHorario->save();
+    if (!$existe) {
+        // Iterar sobre los horarios seleccionados
+        foreach ($horariosSeleccionados as $horario) {
+            // Crear una nueva instancia del modelo Ambiente_horario
+            $ambienteHorario = new AmbienteHorario();
 
-    // Redireccionar a una ruta después de guardar (opcional)
-    return redirect()->route('ambiente_horarios.index')->with('success', 'Ambiente Horario creado correctamente');
+            // Asignar los valores del formulario a los campos del modelo
+            $ambienteHorario->estado = $request->estado;
+            $ambienteHorario->id_horario = $horario;
+            $ambienteHorario->id_ambiente = $request->ambiente;
+            $ambienteHorario->dia = $request->dia;
+
+            // Guardar el nuevo ambiente horario en la base de datos
+            $ambienteHorario->save();
+        }
+
+        // Retornar una respuesta de éxito
+        return response()->json(['success' => true]);
+    } else {
+        // Retornar una respuesta de error si ya existe un horario registrado
+        return response()->json(['error' => 'Ya existe un horario registrado para el mismo día y ambiente.'], 422);
+    }
 }
+
+
 
 
     /**
@@ -103,5 +125,6 @@ class AmbienteHorarioController extends Controller
     public function destroy(AmbienteHorario $ambiente_horario)
     {
         //
+
     }
 }

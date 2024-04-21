@@ -320,14 +320,14 @@ return [
             'url' => 'Ambiente',
             'icon' => 'far fa-fw fa-file',
             // 'label' => 'CRUD',
-            'label_color' => 'warning',
+            // 'label_color' => 'warning',
         ],
         [
             'text' => 'Registrar horarios',
             'url' => 'Horario',
             'icon' => 'far fa-fw fa-file',
             // 'label' => 'CRUD',
-            'label_color' => 'warning',
+            // 'label_color' => 'warning',
         ],
         // ['header' => 'account_settings'],
         // [

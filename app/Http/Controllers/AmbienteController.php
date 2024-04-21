@@ -31,7 +31,7 @@ class AmbienteController extends Controller
     public function create()
     {
         $ubicaciones = Ubicacion::all();
-        return view('Ambiente.create', compact('ubicaciones'));
+        return view('Ambiente.create', compact('ubicaciones',$ubicaciones));
     }
 
     /**
@@ -53,7 +53,7 @@ class AmbienteController extends Controller
     $ambiente->departamento = $request->input('departamento');
     $ambiente->capacidad = $request->input('capacidad');
     $ambiente->TipoDeAmbiente = $request->input('tipo');
-    $ambiente->id_ubicacion = $request->input('ubicacion');
+    $ambiente->id_ubicacion = $request->get('ubicacion');
 
     $ambiente->save();
 
@@ -78,10 +78,22 @@ class AmbienteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    // public function edit($id)
+    // {
+    //     $ambiente = Ambiente::find($id);
+
+    //     return view('Ambiente.edit')->with('Ambiente',$ambiente);
+    // }
+
     public function edit($id)
     {
-        //
+        $ambiente = Ambiente::find($id);
+        $ubicaciones = Ubicacion::all();
+        return view('Ambiente.edit')->with(['Ambiente' => $ambiente, 'ubicaciones' => $ubicaciones]);
     }
+
+    
+    
 
     /**
      * Update the specified resource in storage.
@@ -92,7 +104,23 @@ class AmbienteController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        //  $request->validate([
+        //      'departamento' => 'required',
+        //      'capacidad' => 'required|numeric',
+        //      'tipo' => 'required',
+        //      'ubicacion' => 'required',
+        // ]);
+    
+        $ambiente = Ambiente::find($id);
+
+        $ambiente->departamento = $request->get('departamento');
+        $ambiente->capacidad = $request->get('capacidad');
+        $ambiente->TipoDeAmbiente = $request->get('tipo');
+        $ambiente->id_ubicacion= $request->get('ubicacion');
+    
+        $ambiente->save();
+    
+        return redirect('/Ambiente');
     }
 
     /**
@@ -103,7 +131,9 @@ class AmbienteController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $ambiente = Ambiente::find($id);
+        $ambiente->delete();
+        return redirect('/Ambiente');
     }
     public function getAmbientes()
     {

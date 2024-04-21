@@ -40,5 +40,8 @@ Route::post('/ambiente_horarios', [AmbienteHorarioController::class, 'store'])->
 
 Route::get('/horario/create', [HorarioController::class, 'create'])->name('Horario.create')->middleware('auth');
 
+Route::put('/Ambiente/{ambiente}', [AmbienteController::class, 'update'])->name('ambiente.update')->middleware('auth');
+
+
 //redireccion ala pagina de docente
 Route::view('/docente', 'docente')->name('docente');

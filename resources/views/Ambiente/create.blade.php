@@ -79,14 +79,15 @@
                 // Validar campo Departamento
                 var departamentoRegex = /^[a-zA-Z0-9\s]*$/u;
                 if (!departamentoRegex.test(departamento.trim()) && departamento.trim() !== '') {
-                    $('#departamentoError').text('El campo departamento solo debe contener letras, números y espacios.');
+                    $('#departamentoError').text('El campo tipo solo debe contener letras, números y espacios.');
                     $('#guardarBtn').prop('disabled', true);
                 } else {
                     $('#departamentoError').text('');
                     if (departamento.trim().length < 4 || departamento.trim().length > 30) {
-                        $('#guardarBtn').prop('disabled', true);
+                    $('#guardarBtn').prop('disabled', true);
                     }
                 }
+
 
                 // Validar campo Capacidad
                 if (isNaN(capacidad.trim()) || capacidad.trim() < 25 || capacidad.trim() > 120) {

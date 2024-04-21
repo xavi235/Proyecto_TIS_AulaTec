@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AmbienteHorario extends Model
 {
-    protected $fillable = ['estado', 'id_ambiente', 'id_horario'];
+    protected $fillable = ['estado', 'id_ambiente', 'id_horario', 'dia'];
 
     public function ambiente()
     {
