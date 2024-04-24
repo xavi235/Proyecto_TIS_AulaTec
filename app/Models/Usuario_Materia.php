@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Usuario_Materia extends Model
 {
+    public $timestamps = false;
     use HasFactory;
 
     public function user(){

@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Ubicacion extends Model
+class dia extends Model
 {
-    public $timestamps = false;
     use HasFactory;
+    public $timestamps = false;
     protected $fillable = ['nombre'];
 
     public function ambiente(){
-        return $this->hasMany(Ambiente::class);
+        return $this->belongsTo(Ambiente::class , 'id_ambiente');
     }
+
 }

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class horario extends Model
 {
+    public $timestamps = false;
     use HasFactory;
     protected $fillable = [
         'horaini',
@@ -18,6 +19,10 @@ class horario extends Model
     public function ambiente()
     {
         return $this->belongsTo(Ambiente::class, 'id_ambiente');
+    }
+    public function estado_horario()
+    {
+        return $this->belongsTo(EstadoHorario::class, 'id_estado_horario');
     }
     /**public function ambiente()
     {

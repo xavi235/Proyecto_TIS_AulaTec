@@ -15,7 +15,6 @@ class CreateUsuarioMateriasTable extends Migration
     {
         Schema::create('usuario_materias', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
         });
         Schema::table('usuario_materias', function (Blueprint $table) {
             $table->unsignedBigInteger('id_user');

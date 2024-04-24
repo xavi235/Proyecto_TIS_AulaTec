@@ -8,9 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Ambiente extends Model
 {
     use HasFactory;
-     protected $fillable = ['departamento', 'capacidad', 'tipoDeAmbiente','id_ubicacion'];
+    public $timestamps = false;
+    protected $fillable = ['departamento', 'capacidad', 'tipoDeAmbiente','id_ubicacion'];
 
     public function ubicacion(){
         return $this->belongsTo(Ubicacion::class , 'id_ubicacion');
+    }
+    public function dia(){
+        return $this->hasMany(dia::class , 'id_dia');
     }
 }

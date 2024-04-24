@@ -15,8 +15,6 @@ class CreateAmbienteHorariosTable extends Migration
     {
         Schema::create('ambiente_horarios', function (Blueprint $table) {
             $table->id();
-            $table->string('estado', 20)->nullable();
-            $table->timestamps();
         });
         Schema::table(
             'ambiente_horarios',
@@ -24,14 +22,19 @@ class CreateAmbienteHorariosTable extends Migration
                 $table->unsignedBigInteger('id_ambiente')->nullable();
                 $table->foreign('id_ambiente')
                     ->references('id')
-                    ->on('ambientes')
-                    ->onDelete('cascade');
-                $table->string('dia')->nullable(false);
+                    ->on('ambientes');
                 $table->unsignedBigInteger('id_horario')->nullable();
                 $table->foreign('id_horario')
                     ->references('id')
-                    ->on('horarios')
-                    ->onDelete('cascade');
+                    ->on('horarios');
+                $table->unsignedBigInteger('id_dia')->nullable();
+                $table->foreign('id_dia')
+                        ->references('id')
+                        ->on('dias');
+                $table->unsignedBigInteger('id_estado_horario')->nullable();
+                $table->foreign('id_estado_horario')
+                        ->references('id')
+                        ->on('estado_horarios');
             }
 
         );

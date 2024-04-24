@@ -18,7 +18,6 @@ class CreateAmbientesTable extends Migration
         $table->string('departamento', 30);
         $table->integer('capacidad');
         $table->string('tipoDeAmbiente', 30);
-        $table->timestamps();
 
         $table->unsignedBigInteger('id_ubicacion');
             $table->foreign('id_ubicacion')
