@@ -22,8 +22,12 @@ class CreateAmbientesTable extends Migration
         $table->unsignedBigInteger('id_ubicacion');
             $table->foreign('id_ubicacion')
                 ->references('id')
-                ->on('ubicacions')
-                ->onDelete('cascade');
+                ->on('ubicacions');
+        $table->unsignedBigInteger('id_estado')->default(1);
+        $table->foreign('id_estado')
+                ->references('id')
+                ->on('estados');
+                
     });
     
     }

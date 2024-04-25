@@ -17,4 +17,7 @@ class Ambiente extends Model
     public function dia(){
         return $this->hasMany(dia::class , 'id_dia');
     }
+    public function estado(){
+        return $this->hasOne(Estado::class , 'id_estado');
+    }
 }

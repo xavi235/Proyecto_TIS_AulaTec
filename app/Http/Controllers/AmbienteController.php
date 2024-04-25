@@ -19,8 +19,8 @@ class AmbienteController extends Controller
         if (Auth::user()->id_rol !== 1) {
             return redirect()->route('home');
         }
-          $ambientes = Ambiente::all();
-          return view('Ambiente.index')->with('ambientes', $ambientes);
+        $ambientes = Ambiente::where('id_estado', 1)->get();
+        return view('Ambiente.index')->with('ambientes', $ambientes);
     }
 
     /**
@@ -132,8 +132,9 @@ class AmbienteController extends Controller
     public function destroy($id)
     {
         $ambiente = Ambiente::find($id);
-        $ambiente->delete();
-        return redirect('/Ambiente');
+        $ambiente->id_estado = 2;
+        $ambiente->save();
+        return redirect('/Ambiente')->with('success', 'Ambiente actualizado correctamente');;
     }
     public function getAmbientes()
     {
