@@ -29,7 +29,7 @@
                         <td>{{$ambiente->capacidad}}</td>
                         <td>{{$ambiente->tipoDeAmbiente}}</td>
                         <td>{{ $ambiente->ubicacion->nombre }}</td>
-                        <!-- <td>{{$ambiente->estado}}</td> -->
+                        
                         <td>
                             <form action="{{ route ('Ambiente.destroy', $ambiente->id)}}" method="POST">
                             <a href="/Ambiente/{{ $ambiente->id}}/edit" class = "btn btn-info">Editar</a>

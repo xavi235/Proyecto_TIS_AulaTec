@@ -130,7 +130,25 @@
                 }
 
                 // Si todos los campos son válidos, puedes enviar el formulario manualmente
-                this.submit();
+                var form = this; // Obtén una referencia al formulario
+                $.ajax({
+                    type: $(this).attr('method'),
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        // Muestra el mensaje de actualización exitosa
+                        Swal.fire({
+                            title: 'Actualización exitosa!',
+                            text: 'El ambiente ha sido actualizado correctamente.',
+                            icon: 'success',
+                            timer: 2000, // Duración en milisegundos (3 segundos)
+                            timerProgressBar: true,
+                            showConfirmButton: false
+                        }).then((result) => {
+                            window.location.href = "/Ambiente";
+                        });
+                    }
+                });
             });
         });
     </script>
