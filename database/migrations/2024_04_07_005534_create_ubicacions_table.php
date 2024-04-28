@@ -15,7 +15,7 @@ class CreateUbicacionsTable extends Migration
     {
         Schema::create('ubicacions', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 40)->unique();
+            $table->string('nombre', 80)->unique();
         });
     }
 

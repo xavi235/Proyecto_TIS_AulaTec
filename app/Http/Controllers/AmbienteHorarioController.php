@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\ambiente_horario;
 use App\Models\AmbienteHorario;
 use Illuminate\Http\Request;
+use App\Models\Horario;
+use App\Models\Ambiente;
 
 class AmbienteHorarioController extends Controller
 {
@@ -16,9 +18,12 @@ class AmbienteHorarioController extends Controller
     public function index()
     {
         $ambienteHorarios = AmbienteHorario::all();
-        return view('Horario.index', compact('ambienteHorarios'));
+        $departamentos = Ambiente::all()->pluck('departamento')->unique();
+        $ambientes = Ambiente::all();
+        $horarios = Horario::all();
+        $dias = AmbienteHorario::all()->pluck('dia')->unique();
+        return view('Horario.index', compact('ambienteHorarios','ambientes','departamentos','horarios','dias'));
     }
-
     /**
      * Show the form for creating a new resource.
      *
