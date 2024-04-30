@@ -104,9 +104,9 @@
                         <td>{{ $ambienteHorario->id }}</td>
                         <td>{{ $ambienteHorario->ambiente->departamento }}</td>
                         <td>{{ $ambienteHorario->ambiente->tipoDeAmbiente }}</td>
-                        <td>{{ $ambienteHorario->dia }}</td>
+                        <td>{{ $ambienteHorario->dia->nombre }}</td>
                         <td>{{ $ambienteHorario->horario->horaini }}</td>
-                        <td>{{ $ambienteHorario->estado }}</td>
+                        <td>{{ $ambienteHorario->estado_horario->estado }}</td>
                         <td>
                             <a class="btn btn-info"><i class="bi-pencil-fill"></i></a>
                             <button class="btn btn-danger"><i class="bi-trash"></i></button>
