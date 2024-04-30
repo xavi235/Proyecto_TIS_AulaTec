@@ -4,22 +4,13 @@
 @section('title', 'Listado de ambiente_horarios')
 
 @section('content_header')
-<h1>Listado de ambiente horarios</h1>
+    <h1>Listado de ambiente horarios</h1>
 @stop
 
 @section('content')
-<a href="{{ route('Horario.create') }}" class="btn btn-primary mb-3">CREAR</a>
-@if (session('success'))
-<div class="alert alert-success">
-    {{ session('success') }}
-</div>
-@endif
-@if (session('error'))
-<div class="alert alert-warning">
-    {{ session('error') }}
-</div>
-@endif
-<div class="container-fluid">
+    <a href="{{ route('Horario.create') }}" class="btn btn-primary mb-3">CREAR</a>
+    @if(Auth::check() && Auth::user()->id_rol === 1)
+        <div class="container-fluid">
     <div class="container">
         <h2>Filtros</h2>
         <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
@@ -68,8 +59,8 @@
                             <span class="dropdown-item"><i class="bi-calendar">Todas los Dias</i></span>
                         </li>
                         @foreach($dias as $dia)
-                        <li data-val="{{ $dia }}">
-                            <span class="dropdown-item"><i class="bi-calendar">{{ $dia }}</i></span>
+                        <li data-val="{{ $dia->nombre }}">
+                            <span class="dropdown-item"><i class="bi-calendar">{{ $dia->nombre}}</i></span>
                         </li>
                         @endforeach
                     </ul>
@@ -127,6 +118,7 @@
         </div>
     </div>
 </div>
+@endif
 @stop
 
 @section('css')

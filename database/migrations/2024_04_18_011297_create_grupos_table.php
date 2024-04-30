@@ -16,16 +16,11 @@ class CreateGruposTable extends Migration
         Schema::create('grupos', function (Blueprint $table) {
             $table->id();
             $table->string('grupo', 20);
+            $table->unsignedBigInteger('id_materia')->nullable();
+            $table->foreign('id_materia')->references('id')->on('materias');
         });
 
-        Schema::table('grupos', function (Blueprint $table) {
-            $table->unsignedBigInteger('id_materia');
-            $table->foreign('id_materia')
-                ->references('id')
-                ->on('materias')
-                ->onDelete('cascade');
-            }    
-        );   
+           
     }
 
     /**
@@ -35,6 +30,9 @@ class CreateGruposTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('grupos');
+        Schema::table('grupos', function (Blueprint $table) {
+            $table->dropForeign(['id_materia']);
+            $table->dropColumn('id_materia');
+        });
     }
 }

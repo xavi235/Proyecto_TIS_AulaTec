@@ -10,22 +10,22 @@
     <style>
         body {
             font-family: 'Nunito', sans-serif;
-            background-color: black; /* Color de fondo negro */
-            color: white; /* Color de texto blanco */
-            margin: 0; /* Quitar márgenes predeterminados */
-            padding: 0; /* Quitar relleno predeterminado */
+            background-color: black; 
+            color: white; 
+            margin: 0; 
+            padding: 0; 
         }
         .login-button {
-            background-color: #3862D8; /* Color de fondo azul */
-            color: white; /* Color de texto blanco */
-            padding: 8px 16px; /* Ajustar el relleno */
-            border-radius: 4px; /* Añadir bordes redondeados */
-            text-decoration: none; /* Quitar subrayado del texto */
-            margin-top: 20px; /* Agregar margen superior */
-            margin-right: 20px; /* Agregar margen derecho */
-            position: fixed; /* Fijar la posición */
-            top: 20px; /* Ajustar la posición desde arriba */
-            right: 20px; /* Ajustar la posición desde la derecha */
+            background-color: #3862D8; 
+            color: white; 
+            padding: 8px 16px; 
+            border-radius: 4px; 
+            text-decoration: none;
+            margin-top: 20px; 
+            margin-right: 20px; 
+            position: fixed; 
+            top: 20px; 
+            right: 20px; 
         }
     </style>
 </head>

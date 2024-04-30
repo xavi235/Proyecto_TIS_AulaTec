@@ -8,11 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 class EstadoHorario extends Model
 {
     use HasFactory;
-    public $timestamps = false;
-    protected $fillable = ['estado' ];
+    
+    // Nombre de la tabla en la base de datos
+    protected $table = 'estado_horarios';
 
-    public function horario()
+    // Los campos que se pueden asignar masivamente
+    protected $fillable = ['estado'];
+
+    public $timestamps = false;
+
+    
+
+    // Relación con el modelo AmbienteHorario
+    public function ambiente_horaio()
     {
-        return $this->hasOne(Horario::class, 'id_horario');
+        return $this->hasMany(AmbienteHorario::class , 'id_ambiente_horario');
     }
 }

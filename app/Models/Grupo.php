@@ -12,7 +12,7 @@ class Grupo extends Model
     protected $fillable = [
         'grupo'
     ];
-    public function materia(){
-        return $this->hasMany(Materia::class, 'id_materia');
+    public function grupo_materia(){
+        return $this->belongsTo(Grupo_Materia::class, 'id_grupo_materia');
     }
 }

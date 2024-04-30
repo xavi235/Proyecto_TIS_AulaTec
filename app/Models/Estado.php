@@ -13,6 +13,6 @@ class Estado extends Model
     protected $fillable = ['estado'];
 
     public function ambiente(){
-        return $this->belongsTo(Ambiente::class , 'id_ambiente');
+        return $this->hasMany(Ambiente::class , 'id_ambiente');
     }
 }

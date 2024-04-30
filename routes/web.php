@@ -1,10 +1,14 @@
 <?php
 
+use App\Http\Controllers\AcontecimientoController;
 use App\Http\Controllers\AmbienteController;
 use App\Http\Controllers\AmbienteHorarioController;
 use App\Http\Controllers\HorarioController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ReservaController;
+use App\Models\Reserva;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +46,19 @@ Route::get('/horario/create', [HorarioController::class, 'create'])->name('Horar
 
 Route::put('/Ambiente/{ambiente}', [AmbienteController::class, 'update'])->name('ambiente.update')->middleware('auth');
 
+Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+
+//USUARIOS
+Route::resource('users', 'UserController')
+                ->except('create', 'edit')
+                ->names('users');
 
 //redireccion ala pagina de docente
-Route::view('/docente', 'docente')->name('docente');
+Route::view('/docente', 'Docente.docente')->name('docente')->middleware('docente');
+Route::get('/solicitud-reserva', [ReservaController::class, 'index'])->name('solicitud_reserva')->middleware('docente');
+Route::get('/get-grupos', [ReservaController::class, 'getGrupos'])->name('getGrupos')->middleware('docente');
+
+
+
+
+
