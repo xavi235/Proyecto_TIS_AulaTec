@@ -20,25 +20,28 @@ class LoginController extends Controller
     }
 
     public function login(Request $request)
-    {
-        $credentials = $request->only('email', 'password');
+{
+    $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-            // Autenticación exitosa
-            $user = Auth::user();
+    if (Auth::attempt($credentials)) {
+        // AutenticaciÃ³n exitosa
+        $user = Auth::user();
 
-            // Verificar el rol del usuario
-            if ($user->id_rol !== 1) {
-                Auth::logout();
-                return redirect()->route('docente')->with('error', 'No tienes permiso para acceder a esta página.');
-            }
-
+        // Verificar el rol del usuario
+        if ($user->id_rol === 1) { 
             return redirect()->intended('/home');
+        } elseif ($user->id_rol === 2) {
+            return redirect()->route('docente');
+        } else {
+            Auth::logout();
+            return redirect()->route('login')->with('error', 'No tienes permiso para acceder a esta pÃ¡gina.');
         }
-
-        return back()->withErrors([
-            'email' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
-        ]);
     }
+
+    return back()->withErrors([
+        'email' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
+    ]);
 }
 
+
+}

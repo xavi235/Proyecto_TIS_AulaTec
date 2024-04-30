@@ -319,6 +319,7 @@ return [
             'text' => 'Registrar ambientes',
             'url' => 'Ambiente',
             'icon' => 'far fa-fw fa-file',
+            'can' =>'Ambiente.index'
             // 'label' => 'CRUD',
             // 'label_color' => 'warning',
         ],
@@ -326,8 +327,18 @@ return [
             'text' => 'Registrar horarios',
             'url' => 'Horario',
             'icon' => 'far fa-fw fa-file',
+            'can' =>'Horario.index'
             // 'label' => 'CRUD',
             // 'label_color' => 'warning',
+        ],
+        [
+            'text' => 'Horarios Y Ambientes',
+            'url' => 'Docente',
+            'icon' => 'far fa-fw fa-file',
+            'can' =>'Docente.docente'
+            
+            
+        
         ],
         // ['header' => 'account_settings'],
         // [

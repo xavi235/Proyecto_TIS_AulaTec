@@ -14,7 +14,7 @@ class horario extends Model
         'horafin',
     ];
     public function ambiente_horario(){
-        return $this->hasMany(AmbienteHorario::class, 'id_horario');
+        return $this->hasMany(AmbienteHorario::class, 'id_ambiente_horario');
     }
     public function ambiente()
     {

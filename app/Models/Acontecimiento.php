@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class dia extends Model
+class Acontecimiento extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    protected $fillable = ['nombre'];
+    protected $fillable = ['tipo',];
 
-    public function ambiente_horario(){
-        return $this->hasMany(AmbienteHorario::class , 'id_dia');
+    public function reserva(){
+        return $this->belongsTo(Reserva::class , 'id_reserva');
     }
 }

@@ -14,7 +14,10 @@ class Usuario_Materia extends Model
         return $this->hasMany(User::class, 'id_user');
     }
 
-    public function materia(){
-        return $this->hasMany(Materia::class, 'id_materia');
+    public function grupo_materia(){
+        return $this->hasMany(Grupo_Materia::class, 'id_grupo_materia');
+    }
+    public function reserva(){
+        return $this->hasOne(Reserva::class , 'id_reserva');
     }
 }

@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\ambiente_horario;
 use App\Models\AmbienteHorario;
+use App\Models\dia;
+use App\Models\EstadoHorario;
 use Illuminate\Http\Request;
+use App\Models\Horario;
+use App\Models\Ambiente;
 
 class AmbienteHorarioController extends Controller
 {
@@ -16,7 +20,11 @@ class AmbienteHorarioController extends Controller
     public function index()
     {
         $ambienteHorarios = AmbienteHorario::all();
-        return view('Horario.index', compact('ambienteHorarios'));
+        $departamentos = Ambiente::all()->pluck('departamento')->unique();
+        $ambientes = Ambiente::all();
+        $horarios = Horario::all();
+        $dias = dia::all();
+        return view('Horario.index', compact('ambienteHorarios','ambientes','departamentos','horarios','dias'));
     }
 
     /**
@@ -25,10 +33,13 @@ class AmbienteHorarioController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
-        //
-    }
-
+{
+    // Recuperar los datos del seeder para los estados
+    $estados = EstadoHorario::all();
+    $dias = dia::all();
+    $horarios = Horario::all();
+    return view('Horario.create', compact('estados', 'dias', 'horarios'));
+}
     /**
      * Store a newly created resource in storage.
      *
@@ -36,48 +47,36 @@ class AmbienteHorarioController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-{
-    // Validar los datos del formulario
-    $request->validate([
-        'estado' => 'required',
-        'horario' => 'required|array', // Cambiado a 'array'
-        'ambiente' => 'required',
-        'dia' => 'required',
-    ]);
-
-    // Obtener los horarios seleccionados
-    $horariosSeleccionados = $request->input('horario');
-
-    // Verificar si ya existe una entrada para los mismos horarios seleccionados
-    $existe = AmbienteHorario::whereIn('id_horario', $horariosSeleccionados)
-        ->where('id_ambiente', $request->ambiente)
-        ->where('estado', 'Ocupado')
-        ->where('dia', $request->dia)
-        ->exists();
-
-    if (!$existe) {
-        // Iterar sobre los horarios seleccionados
-        foreach ($horariosSeleccionados as $horario) {
-            // Crear una nueva instancia del modelo Ambiente_horario
-            $ambienteHorario = new AmbienteHorario();
-
-            // Asignar los valores del formulario a los campos del modelo
-            $ambienteHorario->estado = $request->estado;
-            $ambienteHorario->id_horario = $horario;
-            $ambienteHorario->id_ambiente = $request->ambiente;
-            $ambienteHorario->dia = $request->dia;
-
-            // Guardar el nuevo ambiente horario en la base de datos
-            $ambienteHorario->save();
-        }
-
-        // Retornar una respuesta de éxito
-        return response()->json(['success' => true]);
-    } else {
-        // Retornar una respuesta de error si ya existe un horario registrado
-        return response()->json(['error' => 'Ya existe un horario registrado para el mismo día y ambiente.'], 422);
+    {
+        
+        $request->validate([
+            'id_ambiente' => 'required',
+            'id_horario' => 'required',
+            'id_dia' => 'required',
+            'id_estado_horario' => 'required',
+        ]);
+    
+        // Crear una nueva instancia del modelo AmbienteHorario
+        $ambienteHorario = new AmbienteHorario();
+    
+        // Asignar los valores del formulario a los campos del modelo
+        $ambienteHorario->id_ambiente = $request->id_ambiente;
+        $ambienteHorario->id_horario = $request->id_horario;
+        $ambienteHorario->id_dia = $request->id_dia;
+        $ambienteHorario->id_estado_horario = $request->id_estado_horario;
+    
+        // Guardar el nuevo registro en la base de datos
+        $ambienteHorario->save();
+        session()->flash('success', 'El ambiente ha sido registrado correctamente.');
+        // Redireccionar a una vista de éxito o cualquier otra acción deseada
+        return redirect()->route('Horario.index');
     }
-}
+    
+
+
+
+
+
 
 
 

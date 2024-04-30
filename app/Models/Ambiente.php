@@ -14,10 +14,10 @@ class Ambiente extends Model
     public function ubicacion(){
         return $this->belongsTo(Ubicacion::class , 'id_ubicacion');
     }
-    public function dia(){
-        return $this->hasMany(dia::class , 'id_dia');
-    }
     public function estado(){
-        return $this->hasOne(Estado::class , 'id_estado');
+        return $this->belongsTo(Estado::class , 'id_estado');
+    }
+    public function ambiente_horario(){
+        return $this->hasMany(AmbienteHorario::class , 'id_estado');
     }
 }

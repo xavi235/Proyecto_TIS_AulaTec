@@ -7,7 +7,7 @@
 @stop
 
 @section('content')
-    <form action="/Ambiente/{{$Ambiente->id}}" method="POST" id="ambienteForm">
+    <form action="/admin/users/{{$Admin->id}}" method="POST" id="userForm">
         @csrf
         @method('PUT')
         <div class="row">

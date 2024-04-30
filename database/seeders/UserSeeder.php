@@ -20,18 +20,18 @@ class UserSeeder extends Seeder
             'email' => 'admin@gmail.com',
             'password' => Hash::make('123456789'),
             'id_rol' => 1,
-        ]);
+        ])->assignRole('Administrador');
         User::create([
             'name' => 'Corina Justina Flores Villaroel',
             'email' => 'docente@gmail.com',
             'password' => Hash::make('123456789'),
             'id_rol' => 2,
-        ]);
+        ])->assignRole('Docente');
         User::create([
             'name' => 'Corina Justina Flores Villaroel',
             'email' => 'docente1@gmail.com',
             'password' => Hash::make('123@22'),
             'id_rol' => 1,
-        ]);
+        ])->assignRole('Docente');
     }
 }

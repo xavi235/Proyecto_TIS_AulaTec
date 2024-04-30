@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ambiente;
+use App\Models\EstadoHorario;
 use Illuminate\Http\Request;
 use App\Models\Horario;
+use App\Models\dia;
+use App\Models\AmbienteHorario;
+
 
 class HorarioController extends Controller
 {
@@ -30,8 +34,13 @@ class HorarioController extends Controller
     {
         $ambientes = Ambiente::all();
         $horarios = Horario::all();
-        return view('Horario.create', compact('ambientes', 'horarios'));
+        $estados = EstadoHorario::all();
+        $dias = dia::all();
+        return view('Horario.create', compact('ambientes', 'horarios', 'estados', 'dias'));
     }
+
+    
+   
 
     /**
      * Store a newly created resource in storage.
