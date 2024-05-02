@@ -41,5 +41,9 @@
         </div>
     </div>
 </div>
+<div style="text-align: center; margin-top: 50px;">
+    <h2>Facultad de Ciencias y tecnologia</h2>
+    
+</div>
 </body>
 </html>

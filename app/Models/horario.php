@@ -24,6 +24,9 @@ class horario extends Model
     {
         return $this->belongsTo(EstadoHorario::class, 'id_estado_horario');
     }
+    public function reserva(){
+        return $this->hasMany(Reserva::class, 'id_reserva');
+    }
     /**public function ambiente()
     {
         return $this->belongsTo(Ambiente::class, 'id_ambiente');

@@ -57,6 +57,7 @@ Route::resource('users', 'UserController')
 Route::view('/docente', 'Docente.docente')->name('docente')->middleware('docente');
 Route::get('/solicitud-reserva', [ReservaController::class, 'index'])->name('solicitud_reserva')->middleware('docente');
 Route::get('/get-grupos', [ReservaController::class, 'getGrupos'])->name('getGrupos')->middleware('docente');
+Route::post('/guardar-solicitud', [ReservaController::class, 'guardarSolicitud'])->name('guardar_solicitud')->middleware('docente');
 
 
 

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Acontecimiento;
-use App\Models\Grupo;
+use App\Models\Grupo_Materia;
+use App\Models\horario;
 use App\Models\Materia;
 use App\Models\Reserva;
-use App\Models\Usuario_Materia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -48,27 +48,46 @@ class ReservaController extends Controller
         $materias = [];
         $grupos = [];
     }
-  
-    return view('Docente.reserva', compact('materias', 'acontecimientos', 'grupos'));
+    $horarios = horario::all();
+    return view('Docente.reserva', compact('materias', 'acontecimientos', 'grupos','horarios'));
 }
 public function getGrupos(Request $request)
 {
-    $idMateria = $request->input('id_materia');
+    $nombreMateria = $request->input('nombre_materia');
 
-    // Filtrar los grupos por la materia seleccionada
-    $grupos = Grupo::where('id_materia', $idMateria)->pluck('grupo', 'id');
+    $idMateria = Materia::where('nombre', $nombreMateria)->value('id');
+
+    $gruposMateria = Grupo_Materia::where('id_materia', $idMateria)->get();
+
+    $grupos = $gruposMateria->map(function ($grupoMateria) {
+        return $grupoMateria->grupo->grupo;
+    });
 
     return response()->json($grupos);
 }
 
-
-
-
-    
-
-
-    
-
+public function guardarSolicitud(Request $request)
+{
+    // Validar los datos del formulario
+    $request->validate([
+        'capacidad' => 'required|numeric',
+        'fecha' => 'required|date',
+        'motivo' => 'required',
+        'horario' => 'required|array',
+    ]);
+    $id_usuario = Auth::id();
+    $horariosSeleccionados = $request->input('horario');
+    foreach ($horariosSeleccionados as $horario) {
+        $reserva = new Reserva();
+        $reserva->capacidad = $request->input('capacidad');
+        $reserva->fecha_reserva = $request->input('fecha');
+        $reserva->id_usuario_materia = $id_usuario;
+        $reserva->id_acontecimiento = $request->input('motivo');
+        $reserva->id_horario = $horario;
+        $reserva->save();
+    }
+    return redirect()->route('docente');
+}
 
     /**
      * Show the form for creating a new resource.

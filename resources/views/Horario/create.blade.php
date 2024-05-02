@@ -22,28 +22,34 @@
                     <div id="estadoError" class="text-danger"></div>
                 </div>
                 <div class="mb-3">
-                    <label for="id_dia" class="form-label">Día</label>
-                    <select id="id_dia" name="id_dia" class="form-control" tabindex="2" required>
-                        <option value="">Seleccione un día</option>
-                        @foreach($dias as $dia)
-                            <option value="{{ $dia->id }}">{{ $dia->nombre }}</option>
-                        @endforeach
+                     <label for="id_dia" class="form-label">Día</label>
+                     <select id="id_dia" name="id_dia" class="form-control" tabindex="2" required>
+                       <option value="">Seleccione un día</option>
+                         @foreach($dias as $dia)
+                      <option value="{{ $dia->id }}">{{ $dia->nombre }}</option>
+                         @endforeach
                     </select>
-                    <div id="diaError" class="text-danger"></div>
-                </div>
-                <div class="mb-3">
-                    <label for="horario" class="form-label">Horario</label>
-                    <select id="horario" name="id_horario" class="form-control" tabindex="3" required>
-                        @foreach($horarios as $horario)
-                            <option value="{{ $horario->id }}">{{ $horario->horaini }}</option>
-                        @endforeach
-                    </select>
-                    <div id="horarioError" class="text-danger"></div>
-                </div>
+                <div id="diaError" class="text-danger"></div>
+              </div>
+
+              <div class="mb-3">
+    <label for="id_horario" class="form-label">Horario</label>
+    <div class="checkbox-grid"> <!-- Contenedor para la matriz de casillas de verificación -->
+        @foreach($horarios as $horario)
+        <div class="form-check"> <!-- Cada casilla de verificación -->
+            <input class="form-check-input" type="checkbox" name="id_horario[]" id="horario{{ $horario->id }}" value="{{ $horario->id }}">
+            <label class="form-check-label" for="horario{{ $horario->id }}">{{ $horario->horaini }}</label>
+        </div>
+        @endforeach
+    </div>
+    <div id="horarioError" class="text-danger"></div>
+</div>
+
                 
                 <div class="mb-3">
                     <label for="id_ambiente" class="form-label">Ambiente</label>
                     <select id="id_ambiente" name="id_ambiente" class="form-control" tabindex="4" required>
+                        <option value="">Seleccione un ambiente</option>
                         @foreach($ambientes as $ambiente)
                             <option value="{{ $ambiente->id }}">{{ $ambiente->tipoDeAmbiente }}</option>
                         @endforeach
@@ -62,40 +68,68 @@
 
 @section('css')
     {{-- Add here extra stylesheets --}}
+
+    @section('css')
+    <style>
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Cambia el ancho de las columnas según sea necesario */
+            gap: 10px; /* Espacio entre las casillas de verificación */
+        }
+
+        .checkbox-grid .form-check {
+            margin-bottom: 0; /* Elimina el margen inferior predeterminado */
+        }
+    </style>
+@stop
+
 @stop
 
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
-        $(document).ready(function() {
-            $('#horarioForm').submit(function(event) {
-                event.preventDefault(); // Evitar el envío del formulario por defecto
-
-                // Realizar la solicitud AJAX para enviar el formulario
-                $.ajax({
-                    type: 'POST',
-                    url: $(this).attr('action'),
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        // Mostrar el mensaje de éxito
-                        Swal.fire({
-                            title: 'Registro exitoso!',
-                            text: 'El registro se ha realizado correctamente.',
-                            icon: 'success',
-                            timer: 1500, // Duración en milisegundos (3 segundos)
-                            timerProgressBar: true,
-                            showConfirmButton: false
-                        }).then(() => {
-                            // Redireccionar a la página de inicio después de cerrar la alerta
-                            window.location.href = "{{ route('ambiente_horarios.index') }}";
-                        });
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        console.log(xhr.responseText); // Mostrar error en la consola para depuración
-                        // Manejar el error de acuerdo a tus necesidades
-                    }
+       $(document).ready(function() {
+    $('#horarioForm').submit(function(event) {
+        event.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire({
+                        title: 'Registro exitoso!',
+                        text: 'El horario y ambiente han sido registrados correctamente.',
+                        icon: 'success',
+                        timer: 2000, // Duración en milisegundos (2 segundos)
+                        timerProgressBar: true,
+                        showConfirmButton: false
+                    }).then((result) => {
+                        window.location.href = "/Horario";
+                    });
+                }
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                if (xhr.status === 422) {
+                    var errors = xhr.responseJSON;
+                    $('#horarioError').text(errors.error);
+                } else {
+                    $('#horarioError').text('');
+                }
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Ya existe un registro con el mismo día y horario.',
+                    icon: 'error',
+                    timer: 2000,
+                    showConfirmButton: true
+                }).then((result) => {
+                    window.location.href = "/Horario";
                 });
-            });
+            }
         });
+    });
+});
+
+
     </script>
 @stop

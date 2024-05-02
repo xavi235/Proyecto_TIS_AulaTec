@@ -13,6 +13,6 @@ class Grupo extends Model
         'grupo'
     ];
     public function grupo_materia(){
-        return $this->belongsTo(Grupo_Materia::class, 'id_grupo_materia');
+        return $this->hasMany(Grupo_Materia::class, 'id_grupo_materia');
     }
 }

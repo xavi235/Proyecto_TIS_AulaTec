@@ -16,13 +16,8 @@ class CreateGruposTable extends Migration
         Schema::create('grupos', function (Blueprint $table) {
             $table->id();
             $table->string('grupo', 20);
-            $table->unsignedBigInteger('id_materia')->nullable();
-            $table->foreign('id_materia')->references('id')->on('materias');
-        });
-
-           
+        });  
     }
-
     /**
      * Reverse the migrations.
      *

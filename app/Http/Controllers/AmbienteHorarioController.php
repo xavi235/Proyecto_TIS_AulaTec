@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ambiente_horario;
 use App\Models\AmbienteHorario;
-use App\Models\dia;
+use App\Models\Dia;
 use App\Models\EstadoHorario;
 use Illuminate\Http\Request;
 use App\Models\Horario;
@@ -24,7 +23,8 @@ class AmbienteHorarioController extends Controller
         $ambientes = Ambiente::all();
         $horarios = Horario::all();
         $dias = dia::all();
-        return view('Horario.index', compact('ambienteHorarios','ambientes','departamentos','horarios','dias'));
+        $estados=EstadoHorario::all();
+        return view('Horario.index', compact('ambienteHorarios','ambientes','departamentos','horarios','dias',"estados"));
     }
 
     /**
@@ -46,35 +46,45 @@ class AmbienteHorarioController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        
-        $request->validate([
-            'id_ambiente' => 'required',
-            'id_horario' => 'required',
-            'id_dia' => 'required',
-            'id_estado_horario' => 'required',
-        ]);
-    
-        // Crear una nueva instancia del modelo AmbienteHorario
+   
+
+     
+
+     public function store(Request $request)
+{
+    $request->validate([
+        'id_ambiente' => 'required',
+        'id_estado_horario' => 'required',
+        'id_dia' => 'required',
+        'id_horario' => 'required|array',
+    ]);
+
+    // Obtener el primer valor seleccionado para el campo id_dia
+    $id_dia = $request->id_dia;
+
+    // Validar si ya existe un registro con el mismo día y horario
+    $existingRecord = AmbienteHorario::where('id_dia', $id_dia)
+                                      ->whereIn('id_horario', $request->id_horario)
+                                      ->exists();
+
+    if ($existingRecord) {
+        return response()->json(['error' => ''], 422);
+    }
+
+    // Guardar el registro en la base de datos
+    foreach ($request->id_horario as $id_horario) {
         $ambienteHorario = new AmbienteHorario();
     
         // Asignar los valores del formulario a los campos del modelo
         $ambienteHorario->id_ambiente = $request->id_ambiente;
-        $ambienteHorario->id_horario = $request->id_horario;
-        $ambienteHorario->id_dia = $request->id_dia;
+        $ambienteHorario->id_horario = $id_horario;
+        $ambienteHorario->id_dia = $id_dia;
         $ambienteHorario->id_estado_horario = $request->id_estado_horario;
-    
-        // Guardar el nuevo registro en la base de datos
         $ambienteHorario->save();
-        session()->flash('success', 'El ambiente ha sido registrado correctamente.');
-        // Redireccionar a una vista de éxito o cualquier otra acción deseada
-        return redirect()->route('Horario.index');
     }
-    
 
-
-
+    return response()->json(['success' => 'Los ambientes han sido registrados correctamente.'], 200);
+}
 
 
 
@@ -87,43 +97,62 @@ class AmbienteHorarioController extends Controller
      * @param  \App\Models\ambiente_horario  $ambiente_horario
      * @return \Illuminate\Http\Response
      */
-    public function show(AmbienteHorario $ambiente_horario)
-    {
-        //
-    }
 
+    public function edit($id)
+{
+    $ambienteHorario = AmbienteHorario::findOrFail($id);
+    $ambientes = Ambiente::all(); // Esto podría no ser necesario en este contexto
+    $horarios = Horario::all();
+    $dias = Dia::all();
+    $estados = EstadoHorario::all();
+
+    return view('Horario.edit', compact('ambienteHorario', 'ambientes', 'horarios', 'dias', 'estados'));
+}
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\ambiente_horario  $ambiente_horario
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(AmbienteHorario $ambiente_horario)
-    {
-        //
-    }
+ * Update the specified resource in storage.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @param  int  $id
+ * @return \Illuminate\Http\Response
+ */
+public function update(Request $request, $id)
+{
+    // Validar los datos del formulario
+    $request->validate([
+        'id_ambiente' => 'required',
+        'id_horario' => 'required',
+        'id_dia' => 'required',
+        'id_estado_horario' => 'required',
+    ]);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ambiente_horario  $ambiente_horario
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, AmbienteHorario $ambiente_horario)
-    {
-        //
-    }
+    $ambienteHorario = AmbienteHorario::findOrFail($id);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\ambiente_horario  $ambiente_horario
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(AmbienteHorario $ambiente_horario)
-    {
-        //
+    $ambienteHorario->id_ambiente = $request->id_ambiente;
+    $ambienteHorario->id_horario = $request->id_horario;
+    $ambienteHorario->id_dia = $request->id_dia;
+    $ambienteHorario->id_estado_horario = $request->id_estado_horario;
 
-    }
+    $ambienteHorario->save();
+
+    return redirect()->route('Horario.index')->with('success', 'El ambiente y horario se han actualizado correctamente.');
+}
+    
+/**
+ * Remove the specified resource from storage.
+ *
+ * @param  int  $id
+ * @return \Illuminate\Http\Response
+ */
+
+ public function destroy($id)
+ {
+     $ambienteHorario = AmbienteHorario::find($id);
+     if ($ambienteHorario) {
+         $ambienteHorario->id_estado_horario = 2; 
+        $ambienteHorario->save();
+         return redirect('/Horario')->with('success', 'El horario se ha desactivado correctamente.');
+     } else {
+         return redirect('/Horario')->with('error', 'El horario no se encontró.');
+     }
+ }
 }

@@ -15,10 +15,8 @@ class CreateReservasTable extends Migration
     {
         Schema::create('reservas', function (Blueprint $table) {
             $table->id();
-        $table->unsignedBigInteger('id_ambiente');
-        $table->foreign('id_ambiente')
-            ->references('id')
-            ->on('ambientes');
+            $table->integer('capacidad');
+            $table->date('fecha_reserva');
         
         $table->unsignedBigInteger('id_usuario_materia');
         $table->foreign('id_usuario_materia')
@@ -29,7 +27,10 @@ class CreateReservasTable extends Migration
         $table->foreign('id_acontecimiento')
             ->references('id')
             ->on('acontecimientos');
-        
+        $table->unsignedBigInteger('id_horario')->nullable();
+        $table->foreign('id_horario')
+            ->references('id')
+            ->on('horarios');
         $table->timestamps();
         });
         

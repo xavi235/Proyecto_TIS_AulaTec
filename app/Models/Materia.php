@@ -13,8 +13,8 @@ class Materia extends Model
         'nombre',
     ];
 
-    public function grupo(){
-        return $this->belongsTo(Grupo::class, 'id_grupo');
+    public function grupo_materia(){
+        return $this->belongsTo(Grupo_Materia::class, 'id_grupo_materia');
     }
 
     public function usuario_materia(){

@@ -71,7 +71,9 @@
                         "next": "Siguiente"
                     }
                 },
-                "dom": '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>><"row"<"col-sm-12"tr>><"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>', // Cambiar el diseño del DOM
+                "dom": '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>><"row"<"col-sm-12"tr>><"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                "lengthMenu": [5, 10, 25, 50, 100], 
+                 "pageLength": 6
             });
         });
     </script>
