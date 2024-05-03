@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Mensaje extends Model
 {
     use HasFactory;
-    protected $fillable = ['ambiente','usuario','motivo','fecha','horario','materia','grupo','user_id'];
+    protected $fillable = ['capacidad','usuario','motivo','fecha','horario','materia','grupo','user_id'];
     // protected $guarded = [];
 
     public function user()

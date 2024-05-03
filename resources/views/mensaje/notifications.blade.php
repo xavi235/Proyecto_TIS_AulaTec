@@ -24,7 +24,7 @@
                         @forelse ($notificationsData as $notification)
                         <div class="col">
                             <div class="alert alert-default-warning" style="width: 100%;">
-                                <p>Ambiente: {{  $notification['Ambiente'] }}
+                                <p>Capacidad: {{  $notification['capacidad'] }}
                                 <p>Docente: {{  $notification['Solicitante'] }}
                                 <p>Motivo: {{  $notification['Motivo'] }}
                                 <p>Fecha: {{  $notification['Fecha'] }}
@@ -35,16 +35,6 @@
                                 <form action="{{ route('markNotification') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $notification['id'] }}">
-                                    <input type="hidden" name="capacidad"
-                                        value="{{ $notification['capacidad'] }}">
-                                    <input type="hidden" name="fecha_reserva"
-                                        value="{{ $notification['Fecha'] }}">
-                                    <input type="hidden" name="id_usuario_materia"
-                                        value="{{ $notification['id_usuario_materia'] }}">
-                                    <input type="hidden" name="id_acontecimiento"
-                                        value="{{ $notification['id_motivo'] }}">
-                                    <input type="hidden" name="id_horario"
-                                        value="{{ $notification['id_horario'] }}">
                                     <button type="submit" class="btn btn-sm btn-dark">Confirmar Reserva</button>
                                 </form>
                             </div>

@@ -20,11 +20,6 @@ class UsuarioMateriasSeeder extends Seeder
             'id_user' => 2,
             'id_grupo_materia' => 3,
         ],
-        [
-            'id' => 3,
-            'id_user' => 3,
-            'id_grupo_materia' => 4,
-        ],
         // Puedes agregar más arrays para insertar más usuarios si es necesario
         ]);
     }  

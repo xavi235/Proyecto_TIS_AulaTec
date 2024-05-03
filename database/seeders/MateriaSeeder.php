@@ -21,7 +21,7 @@ class MateriaSeeder extends Seeder
             'nombre' => 'CalculoI',
         ]);
         Materia::create([
-            'nombre' => 'Elementos de la Programacion',
+            'nombre' => 'Taller de Ingenieria de Software',
         ]);
         Materia::create([
             'nombre' => 'Introduccion a la Programcion',
