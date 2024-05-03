@@ -332,6 +332,14 @@ return [
             // 'label_color' => 'warning',
         ],
         [
+            'text' => 'Notificaciones',
+            'route' => 'mensaje.index',
+            'icon' => 'far fa-fw fa-file',
+            //'can' =>'post.create'
+            // 'label' => 'CRUD',
+            // 'label_color' => 'warning',
+        ],
+        [
             'text' => 'Horarios Y Ambientes',
             'url' => 'Docente',
             'icon' => 'far fa-fw fa-file',

@@ -23,6 +23,17 @@
                 </div>
                 <div class="mb-3 row">
                     <div class="col">
+                        <label for="tipoAmbiente" class="form-label">Tipo de Ambiente</label>
+                        <select id="ambiente" name="ambiente" class="form-control" tabindex="4">
+                            <option value="">Seleccione un Ambiente</option>
+                            @foreach($Ambientes as $ambiente)
+                                <option value="{{ $ambiente->id }}">{{ $ambiente->tipoDeAmbiente }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col">
                         <label for="materia" class="form-label">Materias</label>
                         <select id="materia" name="materia" class="form-control" tabindex="4">
                             <option value="">Seleccione una Materia</option>

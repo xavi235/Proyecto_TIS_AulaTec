@@ -7,6 +7,10 @@ use App\Models\Grupo_Materia;
 use App\Models\horario;
 use App\Models\Materia;
 use App\Models\Reserva;
+use App\Models\Mensaje;
+use App\Models\Ambiente;
+use App\Models\mensajeListener;
+use App\Events\mensajeEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -49,7 +53,8 @@ class ReservaController extends Controller
         $grupos = [];
     }
     $horarios = horario::all();
-    return view('Docente.reserva', compact('materias', 'acontecimientos', 'grupos','horarios'));
+    $Ambientes = ambiente::all();
+    return view('Docente.reserva', compact('Ambientes','materias', 'acontecimientos', 'grupos','horarios'));
 }
 public function getGrupos(Request $request)
 {
@@ -86,6 +91,8 @@ public function guardarSolicitud(Request $request)
         $reserva->id_horario = $horario;
         $reserva->save();
     }
+    $mensaje = new mensajeController();
+    $mensaje->enviarSolicitud($request);
     return redirect()->route('docente');
 }
 

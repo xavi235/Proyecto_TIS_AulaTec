@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReservaController;
+use App\Http\Controllers\mensajeController;
 use App\Models\Reserva;
 
 /*
@@ -58,6 +59,20 @@ Route::view('/docente', 'Docente.docente')->name('docente')->middleware('docente
 Route::get('/solicitud-reserva', [ReservaController::class, 'index'])->name('solicitud_reserva')->middleware('docente');
 Route::get('/get-grupos', [ReservaController::class, 'getGrupos'])->name('getGrupos')->middleware('docente');
 Route::post('/guardar-solicitud', [ReservaController::class, 'guardarSolicitud'])->name('guardar_solicitud')->middleware('docente');
+
+Route::middleware(['auth'])->group(function(){
+    Route::resource('mensaje', mensajeController::class);
+    Route::resource('reserva', ReservaController::class);
+    Route::get('/solicitud', [ReservaController::class, 'solicitud'])->name('reserva.solicitud');
+
+    Route::get('markAsRead', function(){
+        auth()->user()->unreadNotifications->markAsRead();
+        return redirect()->back();
+    })->name('markAsRead');
+    Route::post('/mark-as-read', [mensajeController::class, 'markNotification'])->name('markNotification');
+
+});
+Route::get('/mensaje/create', [mensajeController::class, 'create'])->name('mensaje.create')->middleware('auth');
 
 
 
