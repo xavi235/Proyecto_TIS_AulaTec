@@ -19,7 +19,7 @@
             <div class="card">
                 <div class="card-header">Solicitudes</div>
                 <div class="card-body">
-                    <div class="row row-cols-2 row-cols-lg-4 g-2 g-lg-3">
+                    <div class="row row-cols-2 row-cols-lg-4 g-2 g-lg-4">
                         @if (auth()->user())
                         @forelse ($notificationsData as $notification)
                         <div class="col">

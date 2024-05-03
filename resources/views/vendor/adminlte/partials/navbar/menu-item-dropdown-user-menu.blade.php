@@ -26,22 +26,12 @@
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
             <span class="dropdown-header">Notificaciones no leidas</span>
             @forelse (auth()->user()->unreadNotifications as $notification)
-            <a href="#" class="dropdown-item">
+            <a href="/mensaje" class="dropdown-item">
                 <i class="fas fa-envelope mr-2"></i> {{ $notification->data['materia'] }}
             </a>
             <span class="ml-3 pull-right text-muted text-sm">{{ $notification->created_at->diffForHumans() }}</span>
             @empty
             <span class="ml-3 pull-right text-muted text-sm">Sin notificaciones por leer </span>
-            @endforelse
-            <div class="dropdown-divider"></div>
-            <span class="dropdown-header">Notificaciones leidas</span>
-            @forelse (auth()->user()->readNotifications as $notification)
-            <a href="#" class="dropdown-item">
-                <i class="fas fa-users mr-2"></i> {{ $notification->data['materia'] }}
-            </a>
-            <span class="ml-3 pull-right text-muted text-sm">{{ $notification->created_at->diffForHumans() }}</span>
-            @empty
-            <span class="ml-3 pull-right text-muted text-sm">Sin notificaciones leidas </span>
             @endforelse
             <div class="dropdown-divider"></div>
             <a href="{{ route('markAsRead') }}" class="dropdown-item dropdown-footer">Marcar todo como leido</a>

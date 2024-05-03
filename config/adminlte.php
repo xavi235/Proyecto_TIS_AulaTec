@@ -335,7 +335,7 @@ return [
             'text' => 'Notificaciones',
             'route' => 'mensaje.index',
             'icon' => 'far fa-fw fa-envelope',
-            //'can' =>'post.create'
+            'can' =>'Horario.index'
             // 'label' => 'CRUD',
             // 'label_color' => 'warning',
         ],
@@ -344,9 +344,15 @@ return [
             'url' => 'Docente',
             'icon' => 'far fa-fw fa-file',
             'can' =>'Docente.docente'
-            
-            
-        
+
+        ],
+        [
+            'text' => 'Solicitar Reserva',
+            'route' => 'solicitud_reserva',
+            'icon' => 'far fa-fw fa-envelope',
+            'can' =>'Solicitud.index'
+            // 'label' => 'CRUD',
+            // 'label_color' => 'warning',
         ],
         // ['header' => 'account_settings'],
         // [
