@@ -68,7 +68,7 @@ class mensajeController extends Controller
             $materia = $data['materia'];
             $grupoId = $data['grupo'];
             $userId = $data['user_id'];
-            $ambienteId = $data['ambiente'];
+            $capacidad = $data['capacidad'];
             $horarioId = $data['horario'];
             $fecha = $data['fecha'];
             $motivoId = $data['motivo'];
@@ -76,15 +76,11 @@ class mensajeController extends Controller
             $materiaId = DB::table('materias')->where('nombre', $materia)->value('id');
             $grupo = $grupoId; //DB::table('grupos')->where('id', $grupoId)->value('grupo');
             $user = User::find($userId)->name;
-            $ambiente = DB::table('ambientes')->where('id', intval($ambienteId))->value('tipoDeAmbiente');
-            $capacidad = DB::table('ambientes')->where('id', intval($ambienteId))->value('capacidad');
             $motivo = DB::table('acontecimientos')->where('id', $motivoId)->value('tipo');
             $horario = DB::table('horarios')->where('id', $horarioId)->value('horaini');
             $notificationsData[] = [
                 'id' => $notification['id'],
-                'Ambiente' => $ambiente,
                 'capacidad' => $capacidad,
-                'idAmbiente' => $ambienteId,
                 'Solicitante' => $user,
                 'id_user' => $userId,
                 'Motivo' => $motivo,
