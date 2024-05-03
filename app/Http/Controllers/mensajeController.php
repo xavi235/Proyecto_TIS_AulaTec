@@ -115,16 +115,6 @@ class mensajeController extends Controller
         // Obtener el ID de la notificación de la solicitud
         $user = auth()->user();
         $notificationId = $request->id;
-        $reserva = new Reserva();
-        //$reserva->id = $request->input('id');
-        $reserva->capacidad = $request->input('capacidad');
-        $reserva->fecha_reserva = $request->input('fecha_reserva');
-        $reserva->id_usuario_materia = $request->input('id_usuario_materia');
-        $reserva->id_acontecimiento = $request->input('id_acontecimiento');
-        $reserva->id_horario = $request->input('id_horario');
-        
-        $reserva->save();
-
         // Marcar la notificación como leída
         auth()->user()->notifications()->where('id', $notificationId)->first()->markAsRead();
 

@@ -24,13 +24,13 @@
                         @forelse ($notificationsData as $notification)
                         <div class="col">
                             <div class="alert alert-default-warning" style="width: 100%;">
-                                <p>Capacidad: {{  $notification['capacidad'] }}
                                 <p>Docente: {{  $notification['Solicitante'] }}
                                 <p>Motivo: {{  $notification['Motivo'] }}
                                 <p>Fecha: {{  $notification['Fecha'] }}
                                 <p>Horario: {{  $notification['Horario'] }}
                                 <p>Grupo: {{  $notification['Grupo'] }}
                                 <p>Materia: {{  $notification['Materia'] }}
+                                <p>Capacidad: {{  $notification['capacidad'] }}
                                 <p>{{ $notification['created_at']->diffForHumans() }}</p>
                                 <form action="{{ route('markNotification') }}" method="POST">
                                     @csrf

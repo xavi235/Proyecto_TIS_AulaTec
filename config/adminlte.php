@@ -154,7 +154,7 @@ return [
 
     'layout_topnav' => null,
     'layout_boxed' => null,
-    'layout_fixed_sidebar' => null,
+    'layout_fixed_sidebar' => true,
     'layout_fixed_navbar' => null,
     'layout_fixed_footer' => null,
     'layout_dark_mode' => null,
@@ -334,7 +334,7 @@ return [
         [
             'text' => 'Notificaciones',
             'route' => 'mensaje.index',
-            'icon' => 'far fa-fw fa-file',
+            'icon' => 'far fa-fw fa-envelope',
             //'can' =>'post.create'
             // 'label' => 'CRUD',
             // 'label_color' => 'warning',

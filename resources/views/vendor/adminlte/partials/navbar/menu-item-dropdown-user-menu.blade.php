@@ -24,27 +24,27 @@
             </span>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-            <span class="dropdown-header">Unread Notifications</span>
+            <span class="dropdown-header">Notificaciones no leidas</span>
             @forelse (auth()->user()->unreadNotifications as $notification)
             <a href="#" class="dropdown-item">
                 <i class="fas fa-envelope mr-2"></i> {{ $notification->data['materia'] }}
-                <span class="ml-3 pull-right text-muted text-sm">{{ $notification->created_at->diffForHumans() }}</span>
             </a>
+            <span class="ml-3 pull-right text-muted text-sm">{{ $notification->created_at->diffForHumans() }}</span>
             @empty
             <span class="ml-3 pull-right text-muted text-sm">Sin notificaciones por leer </span>
             @endforelse
             <div class="dropdown-divider"></div>
-            <span class="dropdown-header">Read Notifications</span>
+            <span class="dropdown-header">Notificaciones leidas</span>
             @forelse (auth()->user()->readNotifications as $notification)
             <a href="#" class="dropdown-item">
-                <i class="fas fa-users mr-2"></i> {{ $notification->data['grupo'] }}
-                <span class="ml-3 pull-right text-muted text-sm">{{ $notification->created_at->diffForHumans() }}</span>
+                <i class="fas fa-users mr-2"></i> {{ $notification->data['materia'] }}
             </a>
+            <span class="ml-3 pull-right text-muted text-sm">{{ $notification->created_at->diffForHumans() }}</span>
             @empty
             <span class="ml-3 pull-right text-muted text-sm">Sin notificaciones leidas </span>
             @endforelse
             <div class="dropdown-divider"></div>
-            <a href="{{ route('markAsRead') }}" class="dropdown-item dropdown-footer">Mark all as read</a>
+            <a href="{{ route('markAsRead') }}" class="dropdown-item dropdown-footer">Marcar todo como leido</a>
         </div>
     </li>
 </ul>
