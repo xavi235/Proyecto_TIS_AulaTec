@@ -154,7 +154,7 @@ return [
 
     'layout_topnav' => null,
     'layout_boxed' => null,
-    'layout_fixed_sidebar' => null,
+    'layout_fixed_sidebar' => true,
     'layout_fixed_navbar' => null,
     'layout_fixed_footer' => null,
     'layout_dark_mode' => null,
@@ -332,13 +332,27 @@ return [
             // 'label_color' => 'warning',
         ],
         [
+            'text' => 'Notificaciones',
+            'route' => 'mensaje.index',
+            'icon' => 'far fa-fw fa-envelope',
+            'can' =>'Horario.index'
+            // 'label' => 'CRUD',
+            // 'label_color' => 'warning',
+        ],
+        [
             'text' => 'Horarios Y Ambientes',
             'url' => 'Docente',
             'icon' => 'far fa-fw fa-file',
             'can' =>'Docente.docente'
-            
-            
-        
+
+        ],
+        [
+            'text' => 'Solicitar Reserva',
+            'route' => 'solicitud_reserva',
+            'icon' => 'far fa-fw fa-envelope',
+            'can' =>'Solicitud.index'
+            // 'label' => 'CRUD',
+            // 'label_color' => 'warning',
         ],
         // ['header' => 'account_settings'],
         // [

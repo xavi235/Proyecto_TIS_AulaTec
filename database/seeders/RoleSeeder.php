@@ -34,7 +34,8 @@ class RoleSeeder extends Seeder
         Permission::create(['name' => 'Horario.create', 'description' => 'Crear ambiente'])->assignRole([$admin2]);
         Permission::create(['name' => 'Horario.edit','description' => 'Editar categoria'])->assignRole([$admin2]);
 
-
+        //Solicitud
+        Permission::create(['name'=> 'Solicitud.index', 'description' => 'Solicitar Reserva'])->assignRole([$docente2]);
 
     }
 }

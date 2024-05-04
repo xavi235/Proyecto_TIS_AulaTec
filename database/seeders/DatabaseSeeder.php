@@ -25,6 +25,8 @@ class DatabaseSeeder extends Seeder
         $this ->call(HorarioSeeder::class);
         $this ->call(DialSeeder::class);
         $this ->call(EstadoHorarios::class);
-
+        $this ->call(GrupoMateriasSeeder::class);
+        $this ->call(UsuarioMateriasSeeder::class); 
+        $this ->call(acontecimientoSeeder::class);
     }
 }
