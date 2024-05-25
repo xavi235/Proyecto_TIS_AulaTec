@@ -89,3 +89,5 @@ Route::get('/asignar-ambiente/{id}', [mensajeController::class, 'asignarAmbiente
 Route::post('/buscar-ambientes', [mensajeController::class, 'buscarAmbientes'])->name('buscarAmbientes')->middleware('auth');
 Route::post('/confirmar-reserva/{id}', [mensajeController::class, 'confirmarReserva'])->name('confirmarReserva')->middleware('auth');
 
+Route::post('/get-ubicaciones', [mensajeController::class, 'getUbicaciones'])->name('getUbicaciones');
+Route::post('/get-ambientes', [mensajeController::class, 'getAmbientes'])->name('getAmbientes');

@@ -232,26 +232,27 @@ class mensajeController extends Controller
         // Retornar una respuesta exitosa
         return redirect()->back()->with('message', 'Reserva confirmada');
     }
-public function showAsignacionForm($id)
-{
-    // Aquí debes obtener los ambientes disponibles y pasarlos a la vista
- //  $ambientes = buscarAmbientes(); // Esto es un ejemplo, debes obtener los ambientes de acuerdo a tu lógica
+    public function showAsignacionForm($id)
+    {
+        $departamentos = DB::table('ambientes')->distinct()->pluck('departamento');
 
-    // Luego, pasas los ambientes a la vista
-    return view('Horario.buscar', ['id' => $id]);
-}
-
-public function asignarAmbiente($id, Request $request)
+        return view('Horario.buscar', ['id' => $id, 'departamentos' => $departamentos]);
+    }
+    
+    public function asignarAmbiente($id, Request $request)
     {
         $capacidad = $request->query('capacidad');
         $tipo_ambiente = $request->query('tipo_ambiente');
         $horario = $request->query('horario');
-
+    
+        $departamentos = DB::table('ambientes')->distinct()->pluck('departamento');
+   
         return view('Horario.buscar', [
             'id' => $id,
             'capacidad' => $capacidad,
             'tipo_ambiente' => $tipo_ambiente,
-            'horario' => $horario
+            'horario' => $horario,
+            'departamentos' => $departamentos
         ]);
     }
     public function buscarAmbientes(Request $request)
@@ -280,5 +281,34 @@ public function asignarAmbiente($id, Request $request)
     
         return response()->json($ambientes);
     }
-    
+    public function getUbicaciones(Request $request)
+    {
+        $departamento = $request->input('departamento');
+        $ubicaciones = DB::table('ambientes as a')
+            ->join('ubicacions as u', 'a.id_ubicacion', '=', 'u.id')
+            ->where('a.departamento', $departamento)
+            ->distinct()
+            ->pluck('u.nombre');
+
+        return response()->json($ubicaciones);
+    }
+    public function getAmbientes(Request $request)
+    {
+        $departamento = $request->input('departamento');
+        $ubicacion = $request->input('ubicacion');
+        $horario = $request->input('horario');
+
+        $ambientes = DB::table('ambientes as a')
+            ->join('ubicacions as u', 'a.id_ubicacion', '=', 'u.id')
+            ->join('ambiente_horarios as ah', 'a.id', '=', 'ah.id_ambiente')
+            ->join('horarios as h', 'ah.id_horario', '=', 'h.id')
+            ->where('a.departamento', $departamento)
+            ->where('u.nombre', $ubicacion)
+            ->where('ah.id_estado_horario', 1)
+            ->where('h.horaini', $horario)
+            ->select('a.numeroaula', 'a.capacidad')
+            ->get();
+
+        return response()->json($ambientes);
+    }
 }
