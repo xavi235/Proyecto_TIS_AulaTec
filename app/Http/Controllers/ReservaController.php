@@ -11,6 +11,7 @@ use App\Models\Mensaje;
 use App\Models\Ambiente;
 use App\Models\mensajeListener;
 use App\Events\mensajeEvent;
+use App\Models\Configuracion;
 use App\Models\TipoAmbiente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,36 +25,52 @@ class ReservaController extends Controller
      * @return \Illuminate\Http\Response
      */
     
-    public function index()
-    {
-        // Acontecimientos necesarios
-        $acontecimientos = Acontecimiento::all();
-        // Nombre del usuario actualmente autenticado
-        $userName = Auth::user()->id;
-        // Consulta SQL para obtener las materias del usuario
-        $materias = DB::select("
-        SELECT DISTINCT
-                u.id AS id_usuario,
-                u.name AS nombre_usuario,
-                m.id AS id_materia,
-                m.nombre AS nombre_materia
-            FROM 
-                usuario_materias um  
-            JOIN 
-                users u ON um.id_user = u.id  
-            JOIN 
-                grupo_materias mg ON um.id_grupo_materia = mg.id  
-            JOIN 
-                materias m ON mg.id_materia = m.id  
-            WHERE 
-                u.id = :userName;
-        ", ['userName' => $userName]);
-        $horarios = horario::all();
-        $Ambientes = ambiente::all();
-        $tiposAmbiente = TipoAmbiente::all();
-        return view('Docente.reserva', compact('tiposAmbiente', 'materias', 'acontecimientos', 'horarios'));
-    }
+     public function index()
+     {
+        $cantidadPeriodos = Configuracion::first();         
+         $acontecimientos = Acontecimiento::all();
+         // Nombre del usuario actualmente autenticado
+         $userName = Auth::user()->id;
+         // Consulta SQL para obtener las materias del usuario
+         $materias = DB::select("
+             SELECT DISTINCT
+                     u.id AS id_usuario,
+                     u.name AS nombre_usuario,
+                     m.id AS id_materia,
+                     m.nombre AS nombre_materia
+                 FROM 
+                     usuario_materias um  
+                 JOIN 
+                     users u ON um.id_user = u.id  
+                 JOIN 
+                     grupo_materias mg ON um.id_grupo_materia = mg.id  
+                 JOIN 
+                     materias m ON mg.id_materia = m.id  
+                 WHERE 
+                     u.id = :userName;
+             ", ['userName' => $userName]);
+         $horarios = horario::all();
+         $Ambientes = ambiente::all();
+         $tiposAmbiente = TipoAmbiente::all();
+         
+         // Pasar la variable $cantidadPeriodos a la vista
+         return view('Docente.reserva', compact('tiposAmbiente', 'materias', 'acontecimientos', 'horarios', 'cantidadPeriodos',));
+     }
 
+     public function mostrarUnica(Request $request)
+     {
+         $reserva = $request->reserva;
+         $ambientes = $request->ambientes;
+ 
+           // Verificar si el usuario autenticado es el mismo que el docente en la reserva
+         if (Auth::check() && Auth::user()->name === $reserva['docente']) {
+             return view('Docente.docente', compact('reserva', 'ambientes'));
+         }
+         // Si no coincide, redirigir a login o mostrar mensaje de error
+         Auth::logout();
+         return redirect()->route('login')->withErrors(['message' => 'No tienes permiso para acceder a esta reserva.']);
+     }
+     
 public function getGrupos(Request $request)
 {
     $nombreMateria = $request->input('nombre_materia');
@@ -70,7 +87,6 @@ public function getGrupos(Request $request)
 
 public function guardarSolicitud(Request $request)
 {
-    // Validar los datos del formulario
     $request->validate([
         'capacidad' => 'required|numeric',
         'fecha' => 'required|date',
@@ -81,7 +97,6 @@ public function guardarSolicitud(Request $request)
     $id_usuario = Auth::id();
     $nombreMateria = $request->input('materia');
     $idGrupo = $request->input('grupo');
-    // Obtener el ID de la tabla 'grupo_materias' usando el nombre de la materia y el nombre del grupo
     $idMateria      = DB::table("materias")->where("nombre",$nombreMateria)->value('id');
     $idGrupoMateria = DB::table("grupo_materias")->where("id_grupo", $idGrupo)->where('id_materia',$idMateria)->value('id');
     $id_usuario_materia = DB::table("usuario_materias")->where('id_user',$id_usuario)->where('id_grupo_materia',$idGrupoMateria)->value('id');
@@ -121,7 +136,9 @@ public function guardarSolicitud(Request $request)
     public function store(Request $request)
     {
         //
-    }
+    } 
+
+    
 
     /**
      * Display the specified resource.
@@ -167,4 +184,13 @@ public function guardarSolicitud(Request $request)
     {
         //
     }
+    public function guardarConfiguracion(Request $request)
+{
+    // Aquí se guarda la configuración en la sesión
+    session(['cantidad_periodos' => $request->cantidad_periodos]);
+
+    // Otras operaciones para guardar la configuración si es necesario
+
+    return redirect()->back()->with('success', 'Configuración guardada correctamente');
+}
 }

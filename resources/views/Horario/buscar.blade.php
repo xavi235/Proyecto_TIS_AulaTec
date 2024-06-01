@@ -123,7 +123,7 @@
                 listaAmbientes.innerHTML = '';
 
                 if (departamento && ubicacion) {
-                    fetch('{{ route('getAmbientes') }}', {
+                    fetch('{{ route('get.ambientes') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

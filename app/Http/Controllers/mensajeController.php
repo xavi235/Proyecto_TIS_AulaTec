@@ -47,180 +47,115 @@ class mensajeController extends Controller
         }
         return redirect()->back()->with('message', 'Reserva enviada');
     }
-    public function index() 
+    public function index()
     {
-        $notificationsData = $this->dataNotification();
-        $reservas = DB::table('reservas')
-            ->join('usuario_materias', 'reservas.id_usuario_materia', '=', 'usuario_materias.id')
-            ->join('users', 'usuario_materias.id_user', '=', 'users.id')
-            ->join('grupo_materias', 'usuario_materias.id_grupo_materia', '=', 'grupo_materias.id')
-            ->join('materias', 'grupo_materias.id_materia', '=', 'materias.id')
-            ->join('grupos', 'grupo_materias.id_grupo', '=', 'grupos.id')
-            ->join('acontecimientos', 'reservas.id_acontecimiento', '=', 'acontecimientos.id')
-            ->join('horarios', 'reservas.id_horario', '=', 'horarios.id')
-            ->join('tipo_ambientes', 'reservas.id_tipoAmbiente', '=','tipo_ambientes.id')
-            ->select(
-                'reservas.*',
-                'usuario_materias.id_user as id_user',
-                'usuario_materias.id_grupo_materia as id_grupo_materia',
-                'users.name as docente',
-                'materias.nombre as materia',
-                'grupos.grupo as grupo',
-                'acontecimientos.tipo as acontecimiento',
-                'horarios.horaini as horario',
-                'tipo_ambientes.nombre as tipo_ambiente'
-            )
-            ->orderByRaw('CASE WHEN reservas.id_acontecimiento = 5 THEN 1 ELSE 0 END ASC') // Mover id_acontecimiento 5 al final
-            ->orderBy('reservas.fecha_reserva', 'asc')  // Ordenar por created_at en orden descendente
-            ->orderBy('horarios.horaini', 'asc')
-            ->get();
+        $reservas = $this->listReservas();
         return view('mensaje.notifications', compact('reservas'));
     }
-    
+
     public function unico($id)
     {
-        $notificationsData = $this->dataNotification();
-        $reservas = DB::table('reservas')
+        $reservas = $this->listReservas();
+        return view('mensaje.detalle', compact('reservas', 'id'));
+    }
+
+    public function listReservas()
+    {
+        $reservas = DB::table(DB::raw('(SELECT @rownum := 0) r'))
+            ->join('reservas', function ($join) {
+                $join->on(DB::raw('true'), '=', DB::raw('true'));
+            })
             ->join('usuario_materias', 'reservas.id_usuario_materia', '=', 'usuario_materias.id')
             ->join('users', 'usuario_materias.id_user', '=', 'users.id')
             ->join('grupo_materias', 'usuario_materias.id_grupo_materia', '=', 'grupo_materias.id')
             ->join('materias', 'grupo_materias.id_materia', '=', 'materias.id')
             ->join('grupos', 'grupo_materias.id_grupo', '=', 'grupos.id')
             ->join('acontecimientos', 'reservas.id_acontecimiento', '=', 'acontecimientos.id')
+            ->join('tipo_ambientes', 'reservas.id_tipoAmbiente', '=', 'tipo_ambientes.id')
             ->join('horarios', 'reservas.id_horario', '=', 'horarios.id')
-            ->join('tipo_ambientes', 'reservas.id_tipoAmbiente', '=','tipo_ambientes.id')
             ->select(
-                'reservas.*',
+                DB::raw('@rownum := @rownum + 1 AS id'),
+                'reservas.fecha_reserva',
+                'reservas.id_usuario_materia',
                 'usuario_materias.id_user as id_user',
                 'usuario_materias.id_grupo_materia as id_grupo_materia',
                 'users.name as docente',
                 'materias.nombre as materia',
                 'grupos.grupo as grupo',
                 'acontecimientos.tipo as acontecimiento',
-                'horarios.horaini as horario',
+                DB::raw('CONCAT(DATE_FORMAT(MIN(horarios.horaini), "%H:%i"), "-", DATE_FORMAT(MAX(horarios.horafin), "%H:%i")) AS horario'),
+                'reservas.capacidad',
                 'tipo_ambientes.nombre as tipo_ambiente'
             )
-            ->orderByRaw('CASE WHEN reservas.id_acontecimiento = 5 THEN 1 ELSE 0 END ASC') // Mover id_acontecimiento 5 al final
-            ->orderBy('reservas.fecha_reserva', 'asc')  // Ordenar por created_at en orden descendente
-            ->orderBy('horarios.horaini', 'asc')
+            ->groupBy(
+                'reservas.fecha_reserva',
+                'reservas.id_usuario_materia',
+                'usuario_materias.id_user',
+                'usuario_materias.id_grupo_materia',
+                'users.name',
+                'materias.nombre',
+                'grupos.grupo',
+                'acontecimientos.tipo',
+                'reservas.capacidad',
+                'tipo_ambientes.nombre'
+            )
+            ->orderByRaw('CASE WHEN reservas.id_acontecimiento = 5 THEN 1 ELSE 0 END ASC')
+            ->orderBy('reservas.fecha_reserva', 'asc')
+            ->orderBy(DB::raw('MIN(horarios.horaini)'), 'asc')
             ->get();
-        return view('mensaje.detalle', compact('reservas','id'));
-    }
-
-    public function dataNotification()
-    {
-        $user = auth()->user();
-        $postNotifications = $user->unreadNotifications;
-
-        $notificationsData = [];
-
-        foreach ($postNotifications as $notification) {
-            $data               = $notification->data;
-            $userId             = $data['user_id'];
-            $capacidad          = $data['capacidad'];
-            $horarioId          = $data['horario'];
-            $fecha              = $data['fecha'];
-            $motivoId           = $data['motivo'];
-            $Idtipo_ambiente    = $data['tipo_ambiente'];
-            $idusuario_materias = $data['idusuario_materias'];
-
-            $idgrupo_materia    = DB::table('usuario_materias')->where('id', $idusuario_materias)->value('id_grupo_materia');
-            $idgrupo            = DB::table('grupo_materias')->where('id', $idgrupo_materia)->value('id_grupo');
-            $idmateria          = DB::table('grupo_materias')->where('id', $idgrupo_materia)->value('id_materia');
-            $materia            = DB::table('materias')->where('id', $idmateria)->value('nombre');
-            $grupo              = DB::table('grupos')->where('id', $idgrupo_materia)->value('grupo');
-            $user               = User::find($userId)->name;
-            $motivo             = DB::table('acontecimientos')->where('id', $motivoId)->value('tipo');
-            $horario            = DB::table('horarios')->where('id', $horarioId)->value('horaini');
-            $tipo_ambiente      = DB::table('tipo_ambientes')->where('id', $Idtipo_ambiente)->value('nombre');
-            $notificationsData[] = [
-                'id'                => $notification['id'],
-                'tipo_ambiente'     => $Idtipo_ambiente,
-                'ambiente'          => $tipo_ambiente,
-                'capacidad'         => $capacidad,
-                'Solicitante'       => $user,
-                'id_user'           => $userId,
-                'Motivo'            => $motivo,
-                'id_motivo'         => $motivoId,
-                'Fecha'             => $fecha,
-                'Horario'           => $horario,
-                'id_horario'        => $horarioId,
-                'Grupo'             => $grupo,
-                'Materia'           => $materia,
-                'id_materia'        => $idmateria,
-                'id_usuario_materia'=> $userId,
-                'created_at'        => $notification->created_at,
-            ];
-        }
-        return $notificationsData;
+            return $reservas;
     }
 
     public function confirmarReserva($id, Request $request)
     {
         // Obtener la información necesaria de la reserva
-        $reserva = Reserva::findOrFail($id);
-        $ambientes = $request->input('ambientes_disponibles');
-        $userMateria = $reserva->id_usuario_materia;
+        $ambientes = $request->input('ambientes');
+        $reserva_data = $this->listReservas()->get($id);
+        //dd($reserva_data);
+        $userMateria = $reserva_data->id_usuario_materia;
         $idUser = DB::table("usuario_materias")->where('id', $userMateria)->value('id_user');
         $userCorreo = User::where('id', $idUser)->value('email');
-        $reserva_data = DB::table('reservas')
-            ->join('usuario_materias', 'reservas.id_usuario_materia', '=', 'usuario_materias.id')
-            ->join('users', 'usuario_materias.id_user', '=', 'users.id')
-            ->join('grupo_materias', 'usuario_materias.id_grupo_materia', '=', 'grupo_materias.id')
-            ->join('materias', 'grupo_materias.id_materia', '=', 'materias.id')
-            ->join('grupos', 'grupo_materias.id_grupo', '=', 'grupos.id')
-            ->join('acontecimientos', 'reservas.id_acontecimiento', '=', 'acontecimientos.id')
-            ->join('horarios', 'reservas.id_horario', '=', 'horarios.id')
-            ->join('tipo_ambientes', 'reservas.id_tipoAmbiente', '=','tipo_ambientes.id')
-            ->select(
-                'reservas.*',
-                'usuario_materias.id_user as id_user',
-                'usuario_materias.id_grupo_materia as id_grupo_materia',
-                'users.name as docente',
-                'materias.nombre as materia',
-                'grupos.grupo as grupo',
-                'acontecimientos.tipo as acontecimiento',
-                'horarios.horaini as horario',
-                'tipo_ambientes.nombre as tipo_ambiente'
-            )
-            ->where('reservas.id', $reserva->id) // Filtro por ID de reserva
-            ->first(); //dd($reserva);
         // Envía el correo electrónico de confirmación
-        Mail::to($userCorreo)->send(new ConfirmacionSolicitud($reserva_data,$ambientes));
-        if($ambientes != null){
-            $aula = DB::table('ambientes')
-            ->where('numeroaula', $ambientes)
-            ->first(['id']);
-            $date = $reserva->fecha_reserva;
-            $dateTime = new DateTime($date);
-            $dayOfWeek = $dateTime->format('l');
-
-            $diasSemana = [
-                'Monday' => 'Lunes',
-                'Tuesday' => 'Martes',
-                'Wednesday' => 'Miércoles',
-                'Thursday' => 'Jueves',
-                'Friday' => 'Viernes',
-                'Saturday' => 'Sabado',
-                'Sunday' => 'Domingo'
-            ];
-
-            $diaSemanaEsp = $diasSemana[$dayOfWeek];
-            $dia = DB::table('dias')
-                ->where('nombre', $diaSemanaEsp)
-                ->value('id');
-            $aulaId = $aula->id;
-            $updated = DB::table('ambiente_horarios')
-             ->where('id_ambiente', $aulaId)
-             ->where('id_horario', $reserva->id_horario)
-             ->where('id_dia', $dia)
-             ->update(['id_estado_horario' => 2]);
+        Mail::to($userCorreo)->send(new ConfirmacionSolicitud($reserva_data, $ambientes));
+        if ($ambientes != null) {
+            foreach ($ambientes as $ambiente) {
+                $this->desactivarAula($ambiente, $reserva_data->fecha_reserva, $reserva_data->horario);
+            }
             return redirect('/mensaje')->with('message', 'Solicitud de Reserva Enviada');
-        }else{
+        } else {
             return redirect('/mensaje')->with('message', 'Notificacion de Aula no disponible');
         }
     }
+    public function desactivarAula($ambiente, $fecha_reserva, $id_horario)
+    {
+        $aula = DB::table('ambientes')
+            ->where('numeroaula', $ambiente)
+            ->first(['id']);
+        $date = $fecha_reserva;
+        $dateTime = new DateTime($date);
+        $dayOfWeek = $dateTime->format('l');
 
+        $diasSemana = [
+            'Monday' => 'Lunes',
+            'Tuesday' => 'Martes',
+            'Wednesday' => 'Miércoles',
+            'Thursday' => 'Jueves',
+            'Friday' => 'Viernes',
+            'Saturday' => 'Sabado',
+            'Sunday' => 'Domingo'
+        ];
+
+        $diaSemanaEsp = $diasSemana[$dayOfWeek];
+        $dia = DB::table('dias')
+            ->where('nombre', $diaSemanaEsp)
+            ->value('id');
+        $aulaId = $aula->id;
+        $updated = DB::table('ambiente_horarios')
+            ->where('id_ambiente', $aulaId)
+            ->where('id_horario', $id_horario)
+            ->where('id_dia', $dia)
+            ->update(['id_estado_horario' => 2]);
+    }
     public function markNotification(Request $request)
     {
         // Obtener el ID de la notificación de la solicitud
