@@ -9,5 +9,5 @@ class Configuracion extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    protected $fillable = ['fecha_inicio','fecha_fin','periodos',];
+    protected $fillable = ['fecha_inicio', 'fecha_fin', 'periodos', 'periodosLaboratorio'];
 }

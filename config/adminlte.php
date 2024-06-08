@@ -344,7 +344,7 @@ return [
             'route' => 'Configuracion.index',
             'url' => 'Configuracion',
             'icon' => 'fas fa-cog',
-        
+            'can' =>'Horario.index'
             
             
             
@@ -359,7 +359,7 @@ return [
             'can' =>'Docente.docente'
 
         ],
-        [
+       [
             'text' => 'Solicitar Reserva',
             'route' => 'solicitud_reserva',
             'icon' => 'far fa-fw fa-envelope',

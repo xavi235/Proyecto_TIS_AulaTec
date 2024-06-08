@@ -18,6 +18,7 @@ class CreateConfiguracionTable extends Migration
             $table->date('fecha_inicio');
             $table->date('fecha_fin');
             $table->integer('periodos');
+            $table->integer('periodosLaboratorio');
         });
     }
 

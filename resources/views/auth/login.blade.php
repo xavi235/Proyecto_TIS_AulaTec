@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-<body style="background-color: #424858;">
+<body style="background-image: url('{{ asset('img/nuevoLogin.jpeg') }}'); background-size: cover; background-repeat: no-repeat; background-position: center;">
     <div class="container-fluid h-100">
         <div class="row justify-content-center h-100">
             <div class="col-md-4">
                 <div class="card mt-5">
-                    <div class="card-header text-center">{{ __('INICIAR SESION') }}</div>
+                    <div class="card-header text-center" style="background-color: rgb(102, 88, 236); color: white;">{{ __('INICIAR SESION') }}</div>
 
                     <div class="card-body">
                         <form method="POST" action="{{ route('login') }}">

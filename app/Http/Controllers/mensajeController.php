@@ -15,7 +15,7 @@ use App\Models\AmbienteHorario;
 use App\Models\TipoAmbiente;
 use App\Mail\ConfirmacionSolicitud; // Asegúrate de tener el namespace correcto para la clase ConfirmarReserva
 use Illuminate\Support\Facades\Mail;
-use DateTime; 
+use DateTime;
 
 class mensajeController extends Controller
 {
@@ -42,7 +42,7 @@ class mensajeController extends Controller
 
         foreach ($horariosSeleccionados as $horario) {
             $data['horario']    = $horario;
-            $mensaje            = Mensaje::create($data);        
+            $mensaje            = Mensaje::create($data);
             event(new mensajeEvent($mensaje));
         }
         return redirect()->back()->with('message', 'Reserva enviada');
@@ -61,10 +61,7 @@ class mensajeController extends Controller
 
     public function listReservas()
     {
-        $reservas = DB::table(DB::raw('(SELECT @rownum := 0) r'))
-            ->join('reservas', function ($join) {
-                $join->on(DB::raw('true'), '=', DB::raw('true'));
-            })
+        $reservas = DB::table('reservas')
             ->join('usuario_materias', 'reservas.id_usuario_materia', '=', 'usuario_materias.id')
             ->join('users', 'usuario_materias.id_user', '=', 'users.id')
             ->join('grupo_materias', 'usuario_materias.id_grupo_materia', '=', 'grupo_materias.id')
@@ -74,7 +71,7 @@ class mensajeController extends Controller
             ->join('tipo_ambientes', 'reservas.id_tipoAmbiente', '=', 'tipo_ambientes.id')
             ->join('horarios', 'reservas.id_horario', '=', 'horarios.id')
             ->select(
-                DB::raw('@rownum := @rownum + 1 AS id'),
+                'reservas.id',
                 'reservas.fecha_reserva',
                 'reservas.id_usuario_materia',
                 'usuario_materias.id_user as id_user',
@@ -83,49 +80,105 @@ class mensajeController extends Controller
                 'materias.nombre as materia',
                 'grupos.grupo as grupo',
                 'acontecimientos.tipo as acontecimiento',
-                DB::raw('CONCAT(DATE_FORMAT(MIN(horarios.horaini), "%H:%i"), "-", DATE_FORMAT(MAX(horarios.horafin), "%H:%i")) AS horario'),
+                'horarios.horaini',
+                'horarios.horafin',
                 'reservas.capacidad',
-                'tipo_ambientes.nombre as tipo_ambiente'
-            )
-            ->groupBy(
-                'reservas.fecha_reserva',
-                'reservas.id_usuario_materia',
-                'usuario_materias.id_user',
-                'usuario_materias.id_grupo_materia',
-                'users.name',
-                'materias.nombre',
-                'grupos.grupo',
-                'acontecimientos.tipo',
-                'reservas.capacidad',
-                'tipo_ambientes.nombre'
+                'tipo_ambientes.nombre as tipo_ambiente',
+                'reservas.estado'
             )
             ->orderByRaw('CASE WHEN reservas.id_acontecimiento = 5 THEN 1 ELSE 0 END ASC')
             ->orderBy('reservas.fecha_reserva', 'asc')
-            ->orderBy(DB::raw('MIN(horarios.horaini)'), 'asc')
+            ->orderBy('horarios.horaini', 'asc')
             ->get();
-            return $reservas;
+
+        $result = collect($reservas)->groupBy(function ($item) {
+            return $item->fecha_reserva . '-' . $item->id_usuario_materia;
+        })->map(function ($group) {
+            $groupedByContinuity = [];
+            $currentGroup = [];
+            $previousHorario = null;
+
+            foreach ($group as $item) {
+                if ($previousHorario === null || $previousHorario->horafin == $item->horaini) {
+                    $currentGroup[] = $item;
+                } else {
+                    $groupedByContinuity[] = $currentGroup;
+                    $currentGroup = [$item];
+                }
+                $previousHorario = $item;
+            }
+
+            if (!empty($currentGroup)) {
+                $groupedByContinuity[] = $currentGroup;
+            }
+
+            return $groupedByContinuity;
+        })->flatten(1)->mapWithKeys(function ($group) {
+            $first = $group[0];
+            $last = end($group);
+            $key = count($group) > 1 ? $first->id . '-' . $last->id : $first->id;
+            return [$key => (object) [
+                'id' => $key,
+                'fecha_reserva' => $first->fecha_reserva,
+                'id_usuario_materia' => $first->id_usuario_materia,
+                'id_user' => $first->id_user,
+                'id_grupo_materia' => $first->id_grupo_materia,
+                'docente' => $first->docente,
+                'materia' => $first->materia,
+                'grupo' => $first->grupo,
+                'acontecimiento' => $first->acontecimiento,
+                'horario' => count($group) > 1 ? $first->horaini . '-' . $last->horafin : $first->horaini,
+                'capacidad' => $first->capacidad,
+                'tipo_ambiente' => $first->tipo_ambiente,
+                'estado' => $first->estado
+            ]];
+        });
+        return $result;
     }
 
     public function confirmarReserva($id, Request $request)
     {
         // Obtener la información necesaria de la reserva
         $ambientes = $request->input('ambientes');
-        $reserva_data = $this->listReservas()->get($id);
-        //dd($reserva_data);
-        $userMateria = $reserva_data->id_usuario_materia;
-        $idUser = DB::table("usuario_materias")->where('id', $userMateria)->value('id_user');
-        $userCorreo = User::where('id', $idUser)->value('email');
-        // Envía el correo electrónico de confirmación
-        Mail::to($userCorreo)->send(new ConfirmacionSolicitud($reserva_data, $ambientes));
-        if ($ambientes != null) {
-            foreach ($ambientes as $ambiente) {
-                $this->desactivarAula($ambiente, $reserva_data->fecha_reserva, $reserva_data->horario);
-            }
-            return redirect('/mensaje')->with('message', 'Solicitud de Reserva Enviada');
+        
+        // Verificar si el id es un rango
+        if (strpos($id, '-') !== false) {
+            list($start, $end) = explode('-', $id);
+            $ids = range($start, $end);
         } else {
-            return redirect('/mensaje')->with('message', 'Notificacion de Aula no disponible');
+            $ids = [$id];
         }
+        
+        // Obtener las reservas en el rango
+        $reservas = DB::table('reservas')->whereIn('id', $ids)->get();
+        
+        // Compilar información del usuario y el correo electrónico del primer registro
+        if ($reservas->isNotEmpty()) {
+            $firstReserva = $reservas->first();
+            $userMateria = $firstReserva->id_usuario_materia;
+            $idUser = DB::table("usuario_materias")->where('id', $userMateria)->value('id_user');
+            $userCorreo = User::where('id', $idUser)->value('email');
+        }
+        $reserva_rango = $this->listReservas()->get($id);
+        // Enviar un solo correo electrónico con todas las reservas del rango
+        Mail::to($userCorreo)->send(new ConfirmacionSolicitud($reserva_rango, $ambientes));
+        
+        foreach ($reservas as $reserva_data) {
+            // Cambiar el estado de la reserva a 'pendiente'
+            DB::table('reservas')->where('id', $reserva_data->id)->update(['estado' => 'pendiente']);
+            
+            if ($ambientes != null) {
+                foreach ($ambientes as $ambiente) {
+                    $this->desactivarAula($ambiente, $reserva_data->fecha_reserva, $reserva_data->id_horario);
+                }
+            } else {
+                return redirect('/mensaje')->with('message', 'Notificacion de Aula no disponible');
+            }
+        }
+        
+        return redirect('/mensaje')->with('message', 'Solicitud de Reserva Enviada');
     }
+    
     public function desactivarAula($ambiente, $fecha_reserva, $id_horario)
     {
         $aula = DB::table('ambientes')
@@ -134,7 +187,7 @@ class mensajeController extends Controller
         $date = $fecha_reserva;
         $dateTime = new DateTime($date);
         $dayOfWeek = $dateTime->format('l');
-
+    
         $diasSemana = [
             'Monday' => 'Lunes',
             'Tuesday' => 'Martes',
@@ -144,7 +197,7 @@ class mensajeController extends Controller
             'Saturday' => 'Sabado',
             'Sunday' => 'Domingo'
         ];
-
+    
         $diaSemanaEsp = $diasSemana[$dayOfWeek];
         $dia = DB::table('dias')
             ->where('nombre', $diaSemanaEsp)
@@ -154,8 +207,9 @@ class mensajeController extends Controller
             ->where('id_ambiente', $aulaId)
             ->where('id_horario', $id_horario)
             ->where('id_dia', $dia)
-            ->update(['id_estado_horario' => 2]);
+            ->update(['id_estado_horario' => 3]);
     }
+    
     public function markNotification(Request $request)
     {
         // Obtener el ID de la notificación de la solicitud
@@ -173,15 +227,15 @@ class mensajeController extends Controller
 
         return view('Horario.buscar', ['id' => $id, 'departamentos' => $departamentos]);
     }
-    
+
     public function asignarAmbiente($id, Request $request)
     {
         $capacidad = $request->query('capacidad');
         $tipo_ambiente = $request->query('tipo_ambiente');
         $horario = $request->query('horario');
-    
+
         $departamentos = DB::table('ambientes')->distinct()->pluck('departamento');
-   
+
         return view('Horario.buscar', [
             'id' => $id,
             'capacidad' => $capacidad,
@@ -195,7 +249,7 @@ class mensajeController extends Controller
         $capacidad = $request->input('capacidad');
         $tipo_ambiente = $request->input('tipo_ambiente');
         $horario = $request->input('horario');
-    
+
         $ambientes = DB::table('ambientes as a')
             ->join('ambiente_horarios as ah', 'a.id', '=', 'ah.id_ambiente')
             ->join('ubicacions as u', 'a.id_ubicacion', '=', 'u.id')
@@ -203,17 +257,17 @@ class mensajeController extends Controller
             ->join('estado_horarios as e', 'ah.id_estado_horario', '=', 'e.id')
             ->join('horarios as h', 'ah.id_horario', '=', 'h.id')
             ->where('a.capacidad', $capacidad)
-            ->where('a.id_tipoAmbiente', function($query) use ($tipo_ambiente) {
+            ->where('a.id_tipoAmbiente', function ($query) use ($tipo_ambiente) {
                 $query->select('id')
-                      ->from('tipo_ambientes')
-                      ->where('nombre', $tipo_ambiente);
+                    ->from('tipo_ambientes')
+                    ->where('nombre', $tipo_ambiente);
             })
             ->where('ah.id_estado_horario', 1)
             ->where('h.horaini', $horario)
             ->where('e.id', 1)
             ->select('a.numeroaula')
             ->get();
-    
+
         return response()->json($ambientes);
     }
     public function getUbicaciones(Request $request)

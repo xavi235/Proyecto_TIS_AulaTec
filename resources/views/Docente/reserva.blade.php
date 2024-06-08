@@ -19,6 +19,11 @@
                     </div>
                     <div class="info-box">
                         <div class="info-box-content">
+                            <p class="info-box-text">Periodos: <span id="periodosLaboratorio">{{ $cantidadPeriodos->periodosLaboratorio }}</span></p>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-box-content">
                             <p class="info-box-text">Fecha Inicio: <span id="fechaInicio">{{ $cantidadPeriodos->fecha_inicio }}</span></p>
                         </div>
                     </div>
@@ -152,6 +157,7 @@
     $(document).ready(function() {
 
         var periodosCantidad = parseInt($('#periodosCantidad').text());
+        var periodosLaboratorio = parseInt($('#periodosLaboratorio').text());
         var fechaInicio = new Date($('#fechaInicio').text());
         var fechaFin = new Date($('#fechaFin').text());
         var today = new Date();
@@ -160,10 +166,18 @@
             var tipoAmbiente = $('#tipo_ambiente').find('option:selected').text();
             var selectedHorarios = $('input[name="horario[]"]:checked').length;
 
-            if ((tipoAmbiente === 'Aula' || tipoAmbiente === 'Auditorio') && selectedHorarios >= periodosCantidad) {
-                $('input[name="horario[]"]:not(:checked)').prop('disabled', true); // Deshabilitar los no seleccionados
-            } else {
-                $('input[name="horario[]"]:not(:checked)').prop('disabled', false); // Habilitar todos
+            if (tipoAmbiente === 'Aula' || tipoAmbiente === 'Auditorio') {
+                if (selectedHorarios >= periodosCantidad) {
+                    $('input[name="horario[]"]:not(:checked)').prop('disabled', true);
+                } else {
+                    $('input[name="horario[]"]:not(:checked)').prop('disabled', false);
+                }
+            } else if (tipoAmbiente === 'Laboratorio') {
+                if (selectedHorarios >= periodosLaboratorio) {
+                    $('input[name="horario[]"]:not(:checked)').prop('disabled', true);
+                } else {
+                    $('input[name="horario[]"]:not(:checked)').prop('disabled', false);
+                }
             }
         }
 
@@ -294,7 +308,7 @@
                         title: 'Solicitud enviada exitosamente',
                         text: '¡Gracias por enviar tu solicitud!',
                         icon: 'success',
-                        timer: 1500,
+                        timer: 1000,
                         timerProgressBar: true,
                         showConfirmButton: false
                     }).then((result) => {
@@ -305,6 +319,7 @@
                 }
             });
         });
+
         if (today < fechaInicio || today > fechaFin) {
             $('#enviarSolicitud').prop('disabled', true);
             $('#fueraDeRangoError').show();

@@ -9,8 +9,9 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ConfiguracionController;
+use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\ReservaController;
-use App\Http\Controllers\MensajeController;
+use App\Http\Controllers\mensajeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +60,11 @@ Route::resource('users', UserController::class)
 
 //redireccion ala pagina de docente
 Route::view('/docente', 'Docente.docente')->name('docente')->middleware('docente');
+
+
+Route::get('/docente', [DocenteController::class, 'index'])->name('docente')->middleware('docente');
+
+//Route::view('/docente',  [DocenteController::class, 'index'])->name('docente')->middleware('docente');
 Route::get('/solicitud-reserva', [ReservaController::class, 'index'])->name('solicitud_reserva')->middleware('docente');
 Route::get('/get-grupos', [ReservaController::class, 'getGrupos'])->name('getGrupos')->middleware('docente');
 Route::post('/guardar-solicitud', [ReservaController::class, 'guardarSolicitud'])->name('guardar_solicitud')->middleware('docente');
@@ -86,4 +92,6 @@ Route::post('/confirmar-reserva/{id}', [MensajeController::class, 'confirmarRese
 Route::post('/get-ubicaciones', [MensajeController::class, 'getUbicaciones'])->name('getUbicaciones');
 Route::post('/get-ambientes', [MensajeController::class, 'getAmbientes']);
 Route::get('/docente/reserva-unica', [ReservaController::class, 'mostrarUnica'])->name('docente.unica')->middleware('auth.redirect');
+Route::get('/reservas/pendientes', [ReservaController::class, 'showPendientes'])->name('reservas.pendientes')->middleware('auth');
+Route::post('/confirmar-reserva/{id}/{action}', [ReservaController::class, 'confirmarSolicitud'])->name('confirmar-solicitud');
 
