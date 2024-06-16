@@ -4,7 +4,9 @@
 
 @section('content_header')
     @if(Auth::check() && Auth::user()->id_rol === 1)
-        <h1>Configuracion Solicitudes</h1>
+    <div class="text-center mb-4">
+        <h1 class="welcome-text">CONFIGURACION SOLICITUDES</h1>
+    </div>
         <div class="card">
             <div class="card-body">
                 <form action="{{ route('guardar_configuracion') }}" method="POST" id="configuracion_form">
@@ -40,7 +42,14 @@
         </div>
     @endif
 @stop
-
+@section('footer')
+<footer class="text-center" style="background-color: rgb(112, 127, 240); color: white; padding: 1px;">
+    <p style="font-size: 15px;">Copyright © 2024 DevGenius. Todos los derechos son propiedad de DevGenius.</p>
+</footer>
+@endsection
+@section('css')
+<link rel="stylesheet" href="{{ asset('estilos/Docente.css') }}">
+@stop
 @section('js')
     <!-- Incluir SweetAlert2 desde un CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

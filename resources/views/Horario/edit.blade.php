@@ -3,7 +3,9 @@
 @section('title', 'Editar Ambiente y Horario')
 
 @section('content_header')
-    <h1>Editar Ambiente y Horario</h1>
+<div class="text-center mb-4">
+    <h1 class="welcome-text">EDITAR AMBIENTES Y HORARIOS</h1>
+</div>
 @stop
 
 @section('content')
@@ -58,10 +60,10 @@
             <button type="submit" class="btn btn-primary" id="guardarBtn" tabindex="6">Actualizar</button>
         </div>
     </form>
+    
 @stop
-
 @section('css')
-    {{-- Add here extra stylesheets --}}
+<link rel="stylesheet" href="{{ asset('estilos/Docente.css') }}">
 @stop
 
 @section('js')
@@ -96,4 +98,6 @@
             });
         });
     </script>
+    
 @stop
+

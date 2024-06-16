@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Horario;
+use App\Models\horario;
 use Illuminate\Database\Seeder;
 
 class HorarioSeeder extends Seeder

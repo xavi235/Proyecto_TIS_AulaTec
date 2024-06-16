@@ -3,7 +3,9 @@
 @section('title', 'CRUD')
 
 @section('content_header')
-    <h1>Listado de ambientes</h1>
+<div class="text-center mb-4">
+    <h1 class="welcome-text">LISTADO DE AMBIENTES</h1>
+</div>
 @stop
 
 @section('content')
@@ -55,8 +57,8 @@
 
 @section('css')
     <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('estilos/Docente.css') }}">
 @stop
-
 @section('js')
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -84,3 +86,8 @@
         });
     </script>
 @stop
+@section('footer')
+<footer class="text-center" style="background-color: rgb(112, 127, 240); color: white; padding: 1px;">
+    <p style="font-size: 15px;">Copyright © 2024 DevGenius. Todos los derechos son propiedad de DevGenius.</p>
+</footer>
+@endsection

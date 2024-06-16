@@ -3,7 +3,9 @@
 @section('title', 'Solicitud de Reserva')
 
 @section('content_header')
-    <h1>Solicitud de Reserva</h1>
+<div class="text-center mb-4">
+    <h1 class="welcome-text">SOLICITUD DE RESERVA</h1>
+</div>
 @stop
 
 @section('content')
@@ -142,14 +144,18 @@
                 </div>
             </form>
         </div>
+        
     </div>
+    
 @stop
+
 
 @push('css')
 <link rel="stylesheet" href="{{ asset('estilos/reserva.css') }}">
-
 @endpush
-
+@section('css')
+<link rel="stylesheet" href="{{ asset('estilos/Docente.css') }}">
+@stop
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -329,4 +335,9 @@
         }
     });
 </script>
+@section('footer')
+<footer class="text-center" style="background-color: rgb(112, 127, 240); color: white; padding: 1px;">
+    <p style="font-size: 15px;">Copyright © 2024 DevGenius. Todos los derechos son propiedad de DevGenius.</p>
+</footer>
+@endsection
 @endpush

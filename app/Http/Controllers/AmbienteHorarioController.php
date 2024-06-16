@@ -6,7 +6,7 @@ use App\Models\AmbienteHorario;
 use App\Models\dia;
 use App\Models\EstadoHorario;
 use Illuminate\Http\Request;
-use App\Models\Horario;
+use App\Models\horario;
 use App\Models\Ambiente;
 use App\Models\TipoAmbiente;
 

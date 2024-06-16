@@ -15,7 +15,7 @@ class DocenteController extends Controller
         $configuracion->fecha_fin = Carbon::parse($configuracion->fecha_fin);
 
         $meses = [
-            'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+            'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
         ];
 
         $images = [
@@ -27,6 +27,22 @@ class DocenteController extends Controller
             ['src' => 'img/auditorio.jpg', 'alt' => 'Información adicional 4', 'caption' => 'AUDITORIO'],
         ];
 
+
         return view('Docente.docente', compact('configuracion', 'meses', 'images'));
+    }
+    public function informacion()
+    {
+        $configuracion = Configuracion::first();
+    
+        $configuracion->fecha_inicio = Carbon::parse($configuracion->fecha_inicio);
+        $configuracion->fecha_fin = Carbon::parse($configuracion->fecha_fin);
+
+        $meses = [
+            'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+        ];
+
+
+
+        return view('Informacion.informacion', compact('configuracion', 'meses'));
     }
 }

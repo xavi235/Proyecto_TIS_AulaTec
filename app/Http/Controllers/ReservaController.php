@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Acontecimiento;
 use App\Models\Grupo_Materia;
-use App\Models\Horario;
+use App\Models\horario;
 use App\Models\Materia;
 use App\Models\Reserva;
 use App\Models\Mensaje;
@@ -13,6 +13,7 @@ use App\Models\mensajeListener;
 use App\Events\mensajeEvent;
 use App\Models\Configuracion;
 use App\Models\TipoAmbiente;
+use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -88,10 +89,29 @@ class ReservaController extends Controller
             }
             foreach ($ambientes as $ambiente) {
                 $this->activarAula($ambiente, $reserva->fecha_reserva, $reserva->id_horario,$estadoUpdate);            
+                $horario = DB::table('horarios')
+                    ->where('id',$reserva->id_horario)
+                    ->first(['horaini','horafin']);
+                $fechaini = $reserva->fecha_reserva . ' ' . $horario->horaini;
+                $dateTimeIni = new DateTime($fechaini);
+                $fechafin = $reserva->fecha_reserva . ' ' . $horario->horafin;
+                $dateTimeFin = new DateTime($fechafin);
+
+                // Buscar el evento por ID, fecha de inicio, fecha de fin y ID de usuario
+                $event = Event::where('start', $fechaini)
+                    ->where('end', $fechafin)
+                    ->where('user_id', auth()->id())
+                    ->firstOrFail();
+
+                // Actualizar los campos del evento según los datos recibidos en la solicitud
+                $event->description = "Confirmado";
+                $event->color = "#28a745";
+                // Guardar los cambios en la base de datos
+                $event->save();
             }
         }
 
-        return view('Docente.docente');
+        return redirect()->route('docente')->with('success', 'Solicitud confirmada y datos enviados correctamente.');
     }
 
     private function activarAula($ambiente, $fecha_reserva, $id_horario, $estadoUpdate)

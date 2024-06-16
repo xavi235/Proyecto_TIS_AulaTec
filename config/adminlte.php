@@ -339,6 +339,11 @@ return [
             // 'label' => 'CRUD',
             // 'label_color' => 'warning',
         ],
+        [    
+            'text' => 'Calendario',
+            'url' => 'calendar',
+            'icon' => 'fas fa-calendar-alt',
+        ],
         [
             'text' => 'Configuracion',
             'route' => 'Configuracion.index',

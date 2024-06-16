@@ -3,7 +3,9 @@
 @section('title', 'CRUD HORARIOS')
 
 @section('content_header')
-    <h1>Registro de Horas y Ambientes</h1>
+<div class="text-center mb-4">
+    <h1 class="welcome-text">REGISTRO DE HORAS Y AMBIENTES</h1>
+</div>
 @stop
 
 @section('content')
@@ -67,9 +69,8 @@
 @stop
 
 @section('css')
-    {{-- Add here extra stylesheets --}}
-
     @section('css')
+    <link rel="stylesheet" href="{{ asset('estilos/Docente.css') }}">
     <style>
         .checkbox-grid {
             display: grid;
@@ -81,10 +82,14 @@
             margin-bottom: 0; /* Elimina el margen inferior predeterminado */
         }
     </style>
-@stop
+    @stop
 
 @stop
-
+@section('footer')
+<footer class="text-center" style="background-color: rgb(112, 127, 240); color: white; padding: 1px;">
+    <p style="font-size: 15px;">Copyright © 2024 DevGenius. Todos los derechos son propiedad de DevGenius.</p>
+</footer>
+@endsection
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>

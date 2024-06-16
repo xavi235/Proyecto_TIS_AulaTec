@@ -14,6 +14,7 @@ use App\Models\Ambiente;
 use App\Models\AmbienteHorario;
 use App\Models\TipoAmbiente;
 use App\Mail\ConfirmacionSolicitud; // Asegúrate de tener el namespace correcto para la clase ConfirmarReserva
+use App\Models\Event;
 use Illuminate\Support\Facades\Mail;
 use DateTime;
 
@@ -86,6 +87,7 @@ class mensajeController extends Controller
                 'tipo_ambientes.nombre as tipo_ambiente',
                 'reservas.estado'
             )
+            ->whereNotIn('reservas.estado', ['confirmado'])
             ->orderByRaw('CASE WHEN reservas.id_acontecimiento = 5 THEN 1 ELSE 0 END ASC')
             ->orderBy('reservas.fecha_reserva', 'asc')
             ->orderBy('horarios.horaini', 'asc')
@@ -170,6 +172,24 @@ class mensajeController extends Controller
             if ($ambientes != null) {
                 foreach ($ambientes as $ambiente) {
                     $this->desactivarAula($ambiente, $reserva_data->fecha_reserva, $reserva_data->id_horario);
+                    $horario = DB::table('horarios')
+                        ->where('id',$reserva_data->id_horario)
+                        ->first(['horaini','horafin']);
+                    $usuario = DB::table('users')
+                        ->where('id',$idUser)
+                        ->value('name');
+                    $fechaini = $reserva_data->fecha_reserva . ' ' . $horario->horaini;
+                    $dateTimeIni = new DateTime($fechaini);
+                    $fechafin = $reserva_data->fecha_reserva . ' ' . $horario->horafin;
+                    $dateTimeFin = new DateTime($fechafin);
+                    $event = new Event();
+                    $event->user_id = $idUser; // Asignar el id del usuario autenticado
+                    $event->title = "Reserva: " . $reserva_data->id . " Docente: " . $usuario;
+                    $event->description = "Por confirmar";
+                    $event->start = $dateTimeIni;
+                    $event->end = $dateTimeFin;
+                    $event->color = "#ffc107";
+                    $event->save();
                 }
             } else {
                 return redirect('/mensaje')->with('message', 'Notificacion de Aula no disponible');

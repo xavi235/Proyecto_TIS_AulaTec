@@ -87,7 +87,7 @@ body {
     margin-bottom: 20px;
 }
 .welcome-text {
-    color: #333;
+    color: #8060e9;
     font-size: 32px;
     font-weight: bold;
     text-transform: uppercase;
@@ -114,5 +114,9 @@ body {
 
 .carousel-slide .carousel-inner {
     overflow: hidden;
+}
+
+.sky-blue-text {
+    color: #5349db; /* Código de color para azul cielo */
 }
 

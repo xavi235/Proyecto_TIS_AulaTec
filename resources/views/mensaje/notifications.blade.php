@@ -4,7 +4,9 @@
 @section('title', 'Lista de Solicitudes')
 
 @section('content_header')
-<h1>Lista de Solicitudes</h1>
+<div class="text-center mb-4">
+    <h1 class="welcome-text">LISTA DE SOLICITUDES</h1>
+</div>
 @stop
 
 @section('content')
@@ -53,6 +55,7 @@
 </div>
 @endsection
 @section('css')
+<link rel="stylesheet" href="{{ asset('estilos/Docente.css') }}">
 <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.2.0/css/fixedHeader.dataTables.min.css">
 @stop
@@ -91,7 +94,6 @@ $(document).ready(function() {
 
 function sendMarkRequest(id = null) {
     return $.ajax("{{ route('markNotification') }}", {
-
         method: 'POST',
         data: {
             _token: "{{ csrf_token() }}",
@@ -102,14 +104,9 @@ function sendMarkRequest(id = null) {
 
 $(function() {
     $('.mark-as-read').click(function() {
-        let notificationId = $(this).data('id'); // Obtener el ID de la notificación
-
-        // Enviar la solicitud para marcar la notificación como leída
+        let notificationId = $(this).data('id');
         let request = sendMarkRequest(notificationId);
-
-        // Manejar la respuesta de la solicitud
         request.done(() => {
-            // Eliminar el elemento de la interfaz una vez que la notificación se marca como leída
             $(this).parents('div.alert').remove();
         });
     });
@@ -118,11 +115,10 @@ $(function() {
             Swal.fire({
                 title: 'Mensaje',
                 text: sessionMessage,
-                html: '<i class="fa fa-envelope" style="font-size:48px;color:blue"></i><p>' + sessionMessage + '</p>',                timer: 5000,
+                html: '<i class="fa fa-envelope" style="font-size:48px;color:blue"></i><p>' + sessionMessage + '</p>',timer: 2000,
                 timerProgressBar: true,
                 showConfirmButton: false
             }).then((result) => {
-                // Limpiar la variable de sesión
                 $('#sessionMessage').text('');
             });
         }

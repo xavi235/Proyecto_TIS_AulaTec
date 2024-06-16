@@ -12,6 +12,7 @@ use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\mensajeController;
+use App\Http\Controllers\EventController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,7 +65,6 @@ Route::view('/docente', 'Docente.docente')->name('docente')->middleware('docente
 
 Route::get('/docente', [DocenteController::class, 'index'])->name('docente')->middleware('docente');
 
-//Route::view('/docente',  [DocenteController::class, 'index'])->name('docente')->middleware('docente');
 Route::get('/solicitud-reserva', [ReservaController::class, 'index'])->name('solicitud_reserva')->middleware('docente');
 Route::get('/get-grupos', [ReservaController::class, 'getGrupos'])->name('getGrupos')->middleware('docente');
 Route::post('/guardar-solicitud', [ReservaController::class, 'guardarSolicitud'])->name('guardar_solicitud')->middleware('docente');
@@ -94,4 +94,11 @@ Route::post('/get-ambientes', [MensajeController::class, 'getAmbientes']);
 Route::get('/docente/reserva-unica', [ReservaController::class, 'mostrarUnica'])->name('docente.unica')->middleware('auth.redirect');
 Route::get('/reservas/pendientes', [ReservaController::class, 'showPendientes'])->name('reservas.pendientes')->middleware('auth');
 Route::post('/confirmar-reserva/{id}/{action}', [ReservaController::class, 'confirmarSolicitud'])->name('confirmar-solicitud');
+Route::get('/informacion', [DocenteController::class, 'informacion'])->name('informacion');
+Route::get('/calendar', [EventController::class, 'index'])->name('calendar.index');
+Route::get('/events', [EventController::class, 'fetchEvents'])->name('events.fetch');
+Route::post('/events', [EventController::class, 'store'])->name('events.store');
+Route::delete('/events/{id}', [EventController::class, 'destroy'])->name('events.destroy');
+
+
 
